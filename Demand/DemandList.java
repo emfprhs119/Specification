@@ -1,109 +1,93 @@
 package Demand;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+import Inheritance.List_Interface;
+import Main.Main;
 //거리처 리스트
-class DemandList {
-	private Demand[] demandArr;
-	private Demand[] demandMatch;
-	private String match;
-	private int maxSize;
-	private int count;
-	private int matchCount;
-
-	DemandList() {
-		maxSize = 100;
-		demandArr = new Demand[maxSize];
-		demandMatch = new Demand[maxSize];
-		count = 0;
-		matchCount = 0;
-		match = "";
+class DemandList extends ArrayList<Demand> implements List_Interface<Demand> {
+	Demand demand;
+	@Override
+	public void getRs(ResultSet rs) {
+		add(new Demand(rs));
 	}
-	public int getMatchCount() {
-		matchCount = 0;
-		for (int i = 0; i < count; i++) {
-			if (demandArr[i].getName().matches(".*" + match + ".*")) {
-				addMatch(demandArr[i]);
+
+	@Override
+	public boolean removeQuery(int i) {
+			StringBuilder sb=new StringBuilder();
+			if (Main.dataReader.isHasQuery("SELECT * FROM SPEC WHERE DEM_REG_NUM='"+get(i).getRegNum()+"';")){
+				JOptionPane.showMessageDialog(null, "참조하는 명세서가 있어 삭제할 수 없습니다.");
+				return false;
+			}else{
+			sb.append("DELETE FROM DEMAND WHERE DEM_REG_NUM='");
+			sb.append(get(i).getRegNum());
+			sb.append("';");
+			boolean flag = Main.dataReader.execute(sb.toString());
+			
+			return flag;
 			}
-		}
-		return matchCount;
 	}
 
-	private void addMatch(Demand Demand) {
-		demandMatch[matchCount++] = Demand;
+	@Override
+	public boolean isHasQuery(Demand demand) {
+		StringBuilder sb=new StringBuilder();
+		sb.append("SELECT * FROM DEMAND WHERE DEM_NAME='");
+		sb.append(demand.getName());
+		sb.append("';");
+		return Main.dataReader.isHasQuery(sb.toString());
 	}
-
-	public void setMatchStr(String text) {
-		match = text;
-	}
-
-	boolean addList(Demand demand) {
-		if (demand.getName().equals(null) || demand.getName().trim().equals("")){
-			JOptionPane.showMessageDialog(null, "상호를 적어주세요.");
+	@Override
+	public boolean addQuery(Demand demand) {
+		if (demand.getName()==null|| demand.getName().trim().equals("")){
+			JOptionPane.showMessageDialog(null, "상호가 비었습니다.");
 			return false;
 		}
-		if (isHas(demand))
-			return true;
-		if (count == maxSize)
-			resize();
-		this.demandArr[count++] = demand;
-		return true;
-	}
-	public void removeList(int selet) {
-		for (int i=selet;i<count-1;i++){
-			demandArr[i]=demandArr[i+1];
-		}
-		count--;
-	}
-	boolean isHas(Demand demand){
-		for(int i=0;i<count;i++){
-			if (demandArr[i].equals(demand))
-				return true;
-		}
-		return false;
-	}
-	void resize() {
-		maxSize *= 2;
-		demandMatch = new Demand[maxSize];
-		Demand temp[] = new Demand[maxSize];
-		for (int i = 0; i < maxSize / 2; i++)
-			temp[i] = demandArr[i];
-		demandArr = temp;
+		if (isHasQuery(demand))
+			return false;
+		StringBuilder sb=new StringBuilder();
+		sb.append("INSERT INTO DEMAND VALUES('");
+		sb.append(demand.getRegNum());
+		sb.append("','");
+		sb.append(demand.getName());
+		sb.append("','");
+		sb.append(demand.getWho());
+		sb.append("','");
+		sb.append(demand.getTel());
+		sb.append("');");
+		return Main.dataReader.execute(sb.toString());
 	}
 
-
-
-	public void setList(DemandList loadList) {
-		this.demandArr=loadList.demandArr;
-		this.maxSize=loadList.maxSize;
-		this.count=loadList.count;
-	}
-	public Demand getMatch(int index) {
-		return demandMatch[index];
-	}
-	public int getCount() {
-		return count;
-	}
-	public Demand getDemand(int index) {
-		return demandArr[index];
-	}
-	
-	public void matchSort(int num,boolean decreasingFlag) {
-		for(int i=0;i<matchCount-1;i++){
-			for(int j=0;j<matchCount-1;j++){
-				if(demandMatch[j].compareTo(demandMatch[j+1],num)>0){
-					if (decreasingFlag)
-						matchSwap(j,j+1);
-				}else if (demandMatch[j].compareTo(demandMatch[j+1],num)<0){
-					if (!decreasingFlag)
-						matchSwap(j,j+1);
-				}
-			}
+	@Override
+	public void loadList(String search) {
+		clear();
+		StringBuilder sb=new StringBuilder();
+		if (search.equals(""))
+			Main.dataReader.getQuery(this, "Select * from DEMAND;");
+		else{
+			sb.append("Select * from DEMAND WHERE ");
+			sb.append("DEM_NAME LIKE '%");
+			sb.append(search);
+			sb.append("%' OR ");
+			sb.append("DEM_REG_NUM LIKE '%");
+			sb.append(search);
+			sb.append("%' OR ");
+			sb.append("DEM_WHO LIKE '%");
+			sb.append(search);
+			sb.append("%';");
+			Main.dataReader.getQuery(this, sb.toString());
 		}
 	}
-	public void matchSwap(int i,int j){
-		Demand tmp=demandMatch[i];
-		demandMatch[i]=demandMatch[j];
-		demandMatch[j]=tmp;
+
+	@Override
+	public Demand loadObject(String id) {
+		Main.dataReader.getObject(this, "Select * from DEMAND WHERE DEM_NAME = '"+id+"';");
+		return demand;
+	}
+	@Override
+	public void getRsObject(ResultSet rs) {
+		demand=new Demand(rs);
+		
 	}
 }

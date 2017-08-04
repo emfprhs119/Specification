@@ -4,11 +4,17 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.MenuItem;
+import java.awt.Point;
 import java.awt.PopupMenu;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Properties;
+
+import javax.swing.DefaultCellEditor;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -16,17 +22,31 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.Popup;
+import javax.swing.PopupFactory;
 import javax.swing.table.DefaultTableCellRenderer;
+
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.UtilDateModel;
 
 import FrameComponent.ViewManager;
 import FrameComponent.WhitePanel;
+import Inheritance.ColumnManager;
+import Inheritance.ListManager;
+import Inheritance.View_Interface;
 import Main.Main;
 
-//Ç°¸ñ È­¸é
-public class ProductView {
+enum COLUM {
+	¿ùÀÏ, Ç°¸ñÄÚµå, Ç°¸ñ, ±Ô°Ý, ¼ö·®, ´Ü°¡, °ø±Þ°¡¾×, ¼¼¾×
+}
+
+// Ç°¸ñ È­¸é
+public class ProductView implements View_Interface<ProductList> {
+	String[] columStr = { "¿ùÀÏ", "Ç°¸ñÄÚµå", "Ç°¸ñ", "±Ô°Ý", "¼ö·®", "´Ü°¡", "°ø±Þ°¡¾×", "¼¼¾×" };
 	private int maxPage = 1; // ÀüÃ¼ ÆäÀÌÁö
 	private int currPage = 1; // ÇöÀç ÆäÀÌÁö
 
+	ProductList prevProductList; // »óÇ° ¸®½ºÆ®
 	ProductList productList; // »óÇ° ¸®½ºÆ®
 
 	WhitePanel frontTablePanel;
@@ -37,6 +57,8 @@ public class ProductView {
 
 	private JTextField sumText; // Àü¸é ÇÕ°è,ÇÏ´Ü ÇÕ°è
 	private JTextField sumTextBottom;
+	private JTextField sumTaxBottom;
+
 	private JTextField sumLabelField; // ÇÏ´Ü ÇÕ°è ·¹ÀÌºí ÇÊµå¿Í ºóÄ­ ÇÊµå
 	private JTextField sumBlankField;
 	private JLabel sumTextLabel; // Àü¸é ÇÕ°è±Ý¾× ¶óº§
@@ -49,16 +71,49 @@ public class ProductView {
 			"Çà ºÙ¿©³Ö±â (ctrl+shift+v)", "Çà ¿Ã¸®±â (ctrl+shift+up)", "Çà ³»¸®±â (ctrl+shift+down)", "¼¿ º¹»ç (ctrl+c)",
 			"¼¿ Àß¶ó³»±â (ctrl+x)", "¼¿ ºÙ¿©³Ö±â (ctrl+v)" };
 	Clipboard clipboard;
+	String prevText;
 	ViewManager viewManager;
+	String today;
 
+	
+	UtilDateModel model;
+	JDatePanelImpl datePanel;
+	MyJTable currTable;
+	int dateRow, dateCol;
+	Popup popup;
+	ListManager<Product, ProductList> listManager;
+	boolean autocompleteFlag;
+	
 	public ProductView(ViewManager viewManager) {
 		sumTextInit();
 		this.viewManager = viewManager;
 		productList = new ProductList();
+		prevProductList=new ProductList();
+
+		initListManager();
 		clipboard = new Clipboard();
 		Object frontRow[][] = new Object[Main.FrontRow][8]; // Àü¸é Å×ÀÌºí Çà·Ä
 		Object backRow[][] = new Object[Main.BackRow][8]; // ÈÄ¸é Å×ÀÌºí Çà·Ä
-		Object column[] = { "Ç°¸ñ", "±Ô°Ý", "ÀÚÀçºñ", "°¡°øºñ", "¼ö·®", "´Ü°¡", "°ø±Þ°¡¾×", "ºñ°í" };
+		Object column[] = { "¿ùÀÏ", "Ç°¸ñÄÚµå", "Ç°¸ñ", "±Ô°Ý", "¼ö·®", "´Ü°¡", "°ø±Þ°¡¾×", "¼¼¾×" };
+
+		// ³¯Â¥ ¼±ÅÃ
+		model = new UtilDateModel();
+		model.setSelected(true);
+		Properties p = new Properties();
+		p.put("text.today", "Today");
+		p.put("text.month", "Month");
+		p.put("text.year", "Year");
+		datePanel = new JDatePanelImpl(model, p);
+		datePanel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				currTable.setValueAt(Main.dateFormat.format(model.getValue()), dateRow, dateCol);
+				showDatePopup(null, null, false);
+			}
+		});
+		datePanel.setBackground(Color.black);
+
+		
 		// Å×ÀÌºí ÆÐ³Î
 		frontTablePanel = new WhitePanel();
 		backTablePanel = new WhitePanel();
@@ -77,8 +132,8 @@ public class ProductView {
 		frontScroll.setBackground(Color.WHITE);
 		JScrollPane backScroll = new JScrollPane(backTable);
 		backScroll.setBackground(Color.WHITE);
-		frontScroll.setBounds(0, 0, 720, 538);
-		backScroll.setBounds(0, 0, 720, 791);
+		frontScroll.setBounds(0, 0, 720, 354);
+		backScroll.setBounds(0, 0, 720, 607);
 		// Å×ÀÌºí ÃÊ±âÈ­
 		tableInit(frontTable);
 		tableInit(backTable);
@@ -89,7 +144,35 @@ public class ProductView {
 		frontTablePanel.add(frontScroll);
 		backTablePanel.add(backScroll);
 
+		prevProductList.tableToData(frontTable, 0);
 		valueChangedUpdate(frontTable);
+
+	}
+
+	private void showDatePopup(WhitePanel tablePanel, Point loc, boolean b) {
+		if (popup == null) {
+			if (b) {
+				PopupFactory fac = new PopupFactory();
+				datePanel.setVisible(true);
+				Point xy = tablePanel.getLocationOnScreen();
+
+				xy.y += 30;
+				popup = fac.getPopup(tablePanel, datePanel, (int) (xy.getX() + loc.getX()),
+						(int) ((xy.getY() + loc.getY())));
+				popup.show();
+			}
+		} else {
+			popup.hide();
+			popup = null;
+		}
+	}
+
+	private void initListManager() {
+		ColumnManager column = new ColumnManager();
+		String strArr[] = { "»óÈ£", "µî·Ï¹øÈ£", "´ã´çÀÚ" };
+		int intArr[] = { 120, 40, 10 };
+		column.setColumn(strArr, intArr);
+		listManager = new ListManager<Product, ProductList>("°Å·¡Ã³ ºÒ·¯¿À±â", null, productList, column, false);
 	}
 
 	private void popupInit(JPanel frontPanel, JPanel backPanel) {
@@ -108,25 +191,25 @@ public class ProductView {
 			menuItem.addActionListener(backMenu);
 			backPopup.add(menuItem);
 		}
-		setPopup(frontPanel, backPanel, frontPopup, backPopup);
-	}
 
-	private void setPopup(JPanel frontPanel, JPanel backPanel, PopupMenu frontPopup, PopupMenu backPopup) {
 		frontPanel.add(frontPopup);
 		backPanel.add(backPopup);
-		frontTable.addMouseListener(new PopupListner(frontPanel, frontTable, frontPopup));
-		backTable.addMouseListener(new PopupListner(backPanel, backTable, backPopup));
+		frontTable.addMouseListener(new MousePopupListener(frontPanel, frontTable, frontPopup));
+		backTable.addMouseListener(new MousePopupListener(backPanel, backTable, backPopup));
+		// setPopup(frontPanel, backPanel, frontPopup, backPopup);
 	}
 
 	private void sumTextInit() {
 		setSumTextLabel(new JLabel("ÇÕ°è±Ý¾× "));
 		setSumText(new JTextField(10));
 		setSumTextBottom(new JTextField(10));
+		setSumTaxBottom(new JTextField(10));
 		setSumBlankField(new JTextField(10));
 		setSumLabelField(new JTextField(10));
 
 		getSumText().setEditable(false);
 		getSumTextBottom().setEditable(false);
+		getSumTaxBottom().setEditable(false);
 		getSumLabelField().setEditable(false);
 		getSumBlankField().setEditable(false);
 
@@ -138,18 +221,23 @@ public class ProductView {
 		getSumText().setBounds(132, 257, 220, 30);
 
 		getSumBlankField().setBackground(Color.white);
-		getSumBlankField().setBounds(50, 861, 719, 35);
+		getSumBlankField().setBounds(50, 861 - 184, 719, 35);
 
 		getSumLabelField().setText("ÇÕ°è");
 		getSumLabelField().setFont(new Font(Main.font, Font.BOLD, Main.fontSize / 2 * 3));
 		getSumLabelField().setHorizontalAlignment(JTextField.CENTER);
 		getSumLabelField().setBackground(Color.white);
-		getSumLabelField().setBounds(50, 861, 301, 35);
+		getSumLabelField().setBounds(50, 861 - 184, 301, 35);
 
 		getSumTextBottom().setFont(new Font(Main.font, Font.BOLD, Main.fontSize));
 		getSumTextBottom().setHorizontalAlignment(JTextField.RIGHT);
 		getSumTextBottom().setBackground(Main.YELLOW);
-		getSumTextBottom().setBounds(639, 861, 87, 35);
+		getSumTextBottom().setBounds(639, 861 - 184, 87, 35);
+
+		getSumTaxBottom().setFont(new Font(Main.font, Font.BOLD, Main.fontSize));
+		getSumTaxBottom().setHorizontalAlignment(JTextField.RIGHT);
+		getSumTaxBottom().setBackground(Color.white);
+		getSumTaxBottom().setBounds(639, 861 - 184, 87, 35);
 	}
 
 	void tableUpdate(JTable table) {
@@ -175,44 +263,48 @@ public class ProductView {
 
 	protected void valueChangedUpdate(JTable table) {
 		// µ¥ÀÌÅÍ º¯°æ¿¡ µû¸¥ Å×ÀÌºí ¾÷µ¥ÀÌÆ®
-		long sumData = 0;
 		long mulData = 0;
 		int max = table.getRowCount();
 		selx = table.getSelectedColumn();
 		sely = table.getSelectedRow();
 
+		DefaultCellEditor singleclick = new DefaultCellEditor(new JTextField());
+	    singleclick.setClickCountToStart(1);
+
+	    //set the editor as default on every column
+	    for (int i = 0; i < table.getColumnCount(); i++) {
+	        table.setDefaultEditor(table.getColumnClass(i), singleclick);
+	    } 
 		// Àß¸øµÈ µ¥ÀÌÅÍ¸¦ °É·¯³»°í ´Ü°¡¿Í °ø±Þ°¡¾× ÀÔ·Â
 		for (int i = 0; i < max; i++) {
-			sumData = 0;
 			mulData = 0;
 			for (int j = 0; j < 8; j++) {
 				if (table.getValueAt(i, j) != null) {
-					if (!table.getValueAt(i, j).toString()
-							.matches("[a-zA-Z0-9¤¡-¤¾¤¿-¤Ó°¡-ÆR`~!@#$%^&*()-_=+|{};:',.<>/]+")) {
+					if (table.getValueAt(i, j).toString()
+							.matches("")) {
 						table.setValueAt(null, i, j);
 					}
-					if (j >= 2 && j <= 4) {
+					if (j >= 4) {
 						if (Main.stringToLongString(table.getValueAt(i, j)) == null)
 							table.setValueAt(null, i, j);
 						else {
-							table.setValueAt(Main.longToMoneyString(Main.StringToLong(table.getValueAt(i, j))), i, j);
-							if (j <= 3)
-								sumData += Main.StringToLong(table.getValueAt(i, j));
-							else
-								mulData = sumData * Main.StringToLong(table.getValueAt(i, j));
+							table.setValueAt(Main.longToMoneyString(Main.stringToLong(table.getValueAt(i, j))), i, j);
+							if (j == 5)
+								mulData = Main.stringToLong(table.getValueAt(i, j - 1))
+										* Main.stringToLong(table.getValueAt(i, j));
 						}
 					}
 				}
-				if (j == 5) {
-					if (sumData != 0)
-						table.setValueAt(Main.longToMoneyString(sumData), i, 5);
-					else
-						table.setValueAt(null, i, 5);
-				} else if (j == 6) {
+				if (j == 6) {
 					if (mulData != 0)
 						table.setValueAt(Main.longToMoneyString(mulData), i, 6);
 					else
 						table.setValueAt(null, i, 6);
+				} else if (j == 7) {
+					if (mulData != 0)
+						table.setValueAt(Main.longToMoneyString(mulData / 10), i, 7);
+					else
+						table.setValueAt(null, i, 7);
 				}
 			}
 		}
@@ -228,14 +320,17 @@ public class ProductView {
 		if (calcData > 999999999999L) {
 			getSumText().setText("NaN");
 			getSumTextBottom().setText("NaN");
+			getSumTaxBottom().setText("NaN");
 			return;
 		}
 		// bottomTextField Á¶Àý
 		int len = Main.longToMoneyString(calcData).length() > 10 ? (Main.longToMoneyString(calcData).length() - 10) * 10
 				: 0;
-		getSumText().setText(Main.longToMoneyString(calcData) + "¿ø");
+		getSumText().setText(Main.longToMoneyString(calcData + calcData / 10) + "¿ø");
 		getSumTextBottom().setText(Main.longToMoneyString(calcData));
-		getSumTextBottom().setBounds(639 - len, 861, 87 + len, 35);
+		getSumTextBottom().setBounds(594 - len, 861 - 184, 95 + len, 35);
+		getSumTaxBottom().setText(Main.longToMoneyString(calcData / 10));
+		getSumTaxBottom().setBounds(594 + 95, 861 - 184, 80, 35);
 	}
 
 	void clipboardCopy(JTable table) { // º¹»ç
@@ -243,21 +338,16 @@ public class ProductView {
 	}
 
 	void clipboardPaste(JTable table) { // ºÙ¿©³Ö±â
-		if (table.getSelectedColumn() != 5 && table.getSelectedColumn() != 6) {
-			productList.setData(clipboard.pasteData(), table.getSelectedRow(), table.getSelectedColumn());
+		if (table.getSelectedColumn() != 0 && table.getSelectedColumn() != 6 && table.getSelectedColumn() != 7) {
+			productList.setData(clipboard.pasteData(), table.getSelectedRow() + getIndex(), table.getSelectedColumn());
 		}
 	}
 
 	private void tableInit(final MyJTable table) {
 		// Å×ÀÌºí °¡·ÎÅ©±â
-		table.getColumn("Ç°¸ñ").setPreferredWidth(Main.tableSize[0]);
-		table.getColumn("±Ô°Ý").setPreferredWidth(Main.tableSize[1]);
-		table.getColumn("ÀÚÀçºñ").setPreferredWidth(Main.tableSize[2]);
-		table.getColumn("°¡°øºñ").setPreferredWidth(Main.tableSize[3]);
-		table.getColumn("¼ö·®").setPreferredWidth(Main.tableSize[4]);
-		table.getColumn("´Ü°¡").setPreferredWidth(Main.tableSize[5]);
-		table.getColumn("°ø±Þ°¡¾×").setPreferredWidth(Main.tableSize[6]);
-		table.getColumn("ºñ°í").setPreferredWidth(Main.tableSize[7]);
+		for (int i = 0; i < 8; i++) {
+			table.getColumn(columStr[i]).setPreferredWidth(Main.tableSize[i]);
+		}
 		// Å×ÀÌºí ¼¼·ÎÅ©±â
 		table.setRowHeight(23);
 		// ·»´õ¸µ°ú ÅØ½ºÆ® Á¤·Ä¹æ½Ä
@@ -268,11 +358,11 @@ public class ProductView {
 		rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
 		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
 
-		table.getColumnModel().getColumn(0).setCellRenderer(leftRenderer);
+		table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
 		table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+		table.getColumnModel().getColumn(2).setCellRenderer(leftRenderer);
+		table.getColumnModel().getColumn(3).setCellRenderer(leftRenderer);
 		table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
-		table.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
-		table.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
 		table.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
 		table.getColumnModel().getColumn(6).setCellRenderer(rightRenderer);
 		table.getColumnModel().getColumn(7).setCellRenderer(rightRenderer);
@@ -284,7 +374,32 @@ public class ProductView {
 																		// °¡´É
 		table.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "selectNextColumnCell");
 		table.getInputMap().put(KeyStroke.getKeyStroke("RIGHT"), "selectNextColumnCell");
-
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				
+				
+				if (table.getSelectedColumn() == 0) {
+					currTable = table;
+					dateRow = table.getSelectedRow();
+					dateCol = table.getSelectedColumn();
+					//if (!table(row,0)==null)
+					//model.setDate(year, month, day);
+					if (table.getRowCount() == Main.FrontRow)
+						showDatePopup(frontTablePanel, e.getPoint(), true);
+					else
+						showDatePopup(backTablePanel, e.getPoint(), true);
+				} else{
+					
+					showDatePopup(null, null, false);
+					if (table.getSelectedColumn() < 6 && table.getValueAt(table.getSelectedRow(), 0)==null){
+						today = viewManager.getDemandView().getDate().substring(5);
+						table.setValueAt(today,table.getSelectedRow(),0);
+					}
+					
+				}
+			}
+		});
 		table.addKeyListener(new KeyListener() {
 			// Å° ¼¼ÆÃ
 			public void keyPressed(KeyEvent e) {
@@ -299,7 +414,7 @@ public class ProductView {
 					if (e.getKeyCode() == KeyEvent.VK_V) { // ctrl + v ºÙ¿©³Ö±â
 						clipboardPaste(table);
 						tableUpdate(table);
-						
+
 					}
 					// ctrl + shift function
 					if ((e.getModifiers() & KeyEvent.SHIFT_MASK) != 0) {
@@ -332,15 +447,27 @@ public class ProductView {
 					table.setValueAt("", table.getSelectedRow(), table.getSelectedColumn());
 					break;
 				case KeyEvent.VK_ENTER:
-					if (table.getSelectedColumn() == 4) {
-						table.setColumnSelectionInterval(7, 7);
-						table.setRowSelectionInterval(table.getSelectedRow(), table.getSelectedRow());
-					}
-					break;
 				case KeyEvent.VK_RIGHT:
-					if (table.getSelectedColumn() == 4) {
-						table.setColumnSelectionInterval(7, 7);
-						table.setRowSelectionInterval(table.getSelectedRow(), table.getSelectedRow());
+				case KeyEvent.VK_TAB:
+					/*
+					if (prevText!=table.getValueAt(table.getSelectedRow(), table.getSelectedColumn()-1)){
+
+						System.out.println(prevText+" "+table.getValueAt(table.getSelectedRow(), table.getSelectedColumn()-1));
+						if (prevText==null ||table.getValueAt(table.getSelectedRow(), table.getSelectedColumn()-1)==null)
+							Main.modify=true;
+						else
+							if (!prevText.equals(table.getValueAt(table.getSelectedRow(), table.getSelectedColumn()-1)))
+								Main.modify=true;
+					}
+					*/
+					if (table.getSelectedColumn() == 5) {
+						if (table.getRowCount() > table.getSelectedRow() + 1) {
+							table.setColumnSelectionInterval(1, 1);
+							table.setRowSelectionInterval(table.getSelectedRow() + 1, table.getSelectedRow() + 1);
+							if (table.getValueAt(table.getSelectedRow(), 0) == null) {
+								table.setValueAt(table.getValueAt(table.getSelectedRow() - 1, 0), table.getSelectedRow(), 0);
+							}
+						}
 					}
 					break;
 
@@ -354,77 +481,51 @@ public class ProductView {
 			}
 
 			public void keyTyped(KeyEvent e) {
+				/*
 				Character c = e.getKeyChar();
 				// Çã¿ë ¹®ÀÚ
-				if (c.toString().matches("[^a-zA-Z0-9¤¡-¤¾¤¿-¤Ó°¡-ÆR`~!@#$%^&*()-_=+|{};:',.<>?]+")) {
+				if (c.toString().matches("[^a-zA-Z0-9¤¡-¤¾¤¿-¤Ó°¡-ÆR`~!@#$%^&*()-_=+|{};:',.<>?]+..")) {
 					valueChangedUpdate(table);
 					return;
 				} else if (table.isSetCellEditable(table.getSelectedRow(), table.getSelectedColumn())) {
 					keyPressed(e);
 					if (!e.isControlDown()) {
-						// System.out.println(table.get.length);
 						String s = (String) table.getValueAt(table.getSelectedRow(), table.getSelectedColumn());
-						if (table.getSelectedColumn() == 5) {
-							table.setColumnSelectionInterval(0, 0);
-							table.setRowSelectionInterval(table.getSelectedRow() + 1, table.getSelectedRow() + 1);
-						}
-						if (table.getSelectedColumn() == 5 && (table.getSelectedRow() == table.getRowCount() - 1)) {
-							table.setColumnSelectionInterval(0, 0);
-							table.setRowSelectionInterval(table.getSelectedRow(), table.getSelectedRow());
-						}
 						if (s == null || s == "\r\n")
 							s = "";
-
 						table.setValueAt(s + e.getKeyChar(), table.getSelectedRow(), table.getSelectedColumn());
 						Main.modify = true;
-
 					}
 				}
 				valueChangedUpdate(table);
+				*/
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
 			}
 		});
+		
 	}
 
 	// Å×ÀÌºí Å©±â Á¶Á¤ load data
 	public void setTableWidth(String[] stn) {
-		int index = 0;
-		frontTable.getColumn("Ç°¸ñ").setPreferredWidth(Integer.parseInt(stn[index++]));
-		frontTable.getColumn("±Ô°Ý").setPreferredWidth(Integer.parseInt(stn[index++]));
-		frontTable.getColumn("ÀÚÀçºñ").setPreferredWidth(Integer.parseInt(stn[index++]));
-		frontTable.getColumn("°¡°øºñ").setPreferredWidth(Integer.parseInt(stn[index++]));
-		frontTable.getColumn("¼ö·®").setPreferredWidth(Integer.parseInt(stn[index++]));
-		frontTable.getColumn("´Ü°¡").setPreferredWidth(Integer.parseInt(stn[index++]));
-		frontTable.getColumn("°ø±Þ°¡¾×").setPreferredWidth(Integer.parseInt(stn[index++]));
-		frontTable.getColumn("ºñ°í").setPreferredWidth(Integer.parseInt(stn[index++]));
+		for (int i = 0; i < 8; i++) {
+			frontTable.getColumn(columStr[i]).setPreferredWidth(Integer.parseInt(stn[i]));
+		}
 	}
 
 	public void setTableWidth(int[] tableWidth) {
-		int index = 0;
-		frontTable.getColumn("Ç°¸ñ").setPreferredWidth(tableWidth[index++]);
-		frontTable.getColumn("±Ô°Ý").setPreferredWidth(tableWidth[index++]);
-		frontTable.getColumn("ÀÚÀçºñ").setPreferredWidth(tableWidth[index++]);
-		frontTable.getColumn("°¡°øºñ").setPreferredWidth(tableWidth[index++]);
-		frontTable.getColumn("¼ö·®").setPreferredWidth(tableWidth[index++]);
-		frontTable.getColumn("´Ü°¡").setPreferredWidth(tableWidth[index++]);
-		frontTable.getColumn("°ø±Þ°¡¾×").setPreferredWidth(tableWidth[index++]);
-		frontTable.getColumn("ºñ°í").setPreferredWidth(tableWidth[index++]);
+		for (int i = 0; i < 8; i++) {
+			frontTable.getColumn(columStr[i]).setPreferredWidth(tableWidth[i]);
+		}
 	}
 
 	public int[] getTableWidth() {
 		int width[] = new int[8];
-		int index = 0;
-		width[index++] = frontTable.getColumn("Ç°¸ñ").getPreferredWidth();
-		width[index++] = frontTable.getColumn("±Ô°Ý").getPreferredWidth();
-		width[index++] = frontTable.getColumn("ÀÚÀçºñ").getPreferredWidth();
-		width[index++] = frontTable.getColumn("°¡°øºñ").getPreferredWidth();
-		width[index++] = frontTable.getColumn("¼ö·®").getPreferredWidth();
-		width[index++] = frontTable.getColumn("´Ü°¡").getPreferredWidth();
-		width[index++] = frontTable.getColumn("°ø±Þ°¡¾×").getPreferredWidth();
-		width[index++] = frontTable.getColumn("ºñ°í").getPreferredWidth();
+		for (int i = 0; i < 8; i++) {
+			width[i] = frontTable.getColumn(columStr[i]).getPreferredWidth();
+		}
 		return width;
 	}
 
@@ -468,6 +569,14 @@ public class ProductView {
 		this.sumBlankField = sumBlankField;
 	}
 
+	public JTextField getSumTaxBottom() {
+		return sumTaxBottom;
+	}
+
+	public void setSumTaxBottom(JTextField sumTaxBottom) {
+		this.sumTaxBottom = sumTaxBottom;
+	}
+
 	// ÇöÀç ÆäÀÌÁö
 	public int getCurrPage() {
 		return currPage;
@@ -502,13 +611,14 @@ public class ProductView {
 			tableUpdate(frontTable);
 		else
 			tableUpdate(backTable);
+		pageRefresh();
 	}
 
 	public void pageRefresh() {
-		if (productList.getMaxSize() > Main.FrontRow + (maxPage - 1) * Main.BackRow) {
+		if (productList.size() > Main.FrontRow + (maxPage - 1) * Main.BackRow+1) {
 			maxPage++;
 			viewManager.getFrameLabel().setPageText(getPageStr());
-		} else if (productList.getMaxSize() < Main.FrontRow + (maxPage - 1) * Main.BackRow) {
+		} else if (productList.size() < Main.FrontRow + (maxPage - 1) * Main.BackRow) {
 			maxPage--;
 			viewManager.getFrameLabel().setPageText(getPageStr());
 		}
@@ -539,8 +649,47 @@ public class ProductView {
 	public void setProductList(ProductList productList) {
 		this.productList = productList;
 		productList.dataToTable(frontTable, 0);
-		maxPage = (productList.getMaxSize() - Main.FrontRow) / Main.BackRow + 1;
+		maxPage = (productList.size() - Main.FrontRow) / Main.BackRow ;
 		currPage = 1;
+	}
+
+	@Override
+	public void loadDataId(String specId) {
+		productList.loadList(specId);
+		prevProductList.loadList(specId);
+		setCurrPage(1);
+		viewManager.swapPanel("front");
+		refresh();
+	}
+
+	public void saveCurrData(String specId) {
+		if (specId == null) {
+			return;
+		}
+		productList.setSpecId(specId);
+		for (int i = 0; i < productList.size(); i++)
+			listManager.addItem(productList.get(i));
+			
+	}
+
+	public void removeList(String specId) {
+		if (specId == null)
+			return;
+		productList.removeQuery(specId);
+	}
+
+	@Override
+	public void loadData(ProductList o) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public boolean isModify() {
+		if (currPage==1)
+			valueChangedUpdate(frontTable);
+		else
+			valueChangedUpdate(backTable);
+		return !prevProductList.equals(productList);
 	}
 
 }
@@ -567,12 +716,12 @@ class OneCellRenderer extends DefaultTableCellRenderer {
 	}
 }
 
-class PopupListner extends MouseAdapter {
+class MousePopupListener extends MouseAdapter {
 	JPanel panel;
 	JTable table;
 	PopupMenu popup;
 
-	PopupListner(JPanel panel, JTable table, PopupMenu popup) {
+	MousePopupListener(JPanel panel, JTable table, PopupMenu popup) {
 		this.panel = panel;
 		this.table = table;
 		this.popup = popup;
@@ -589,22 +738,23 @@ class PopupListner extends MouseAdapter {
 	}
 }
 
+
 class MyJTable extends JTable {
 	public MyJTable(Object[][] row, Object[] column) {
 		super(row, column);
 	}
 
 	public boolean isSetCellEditable(int row, int column) {
-		// ´Ü°¡ °ø±Þ°¡¾× ÆíÁý ºÒ°¡
-		if (column == 5 || column == 6) {
+		// ³¯Â¥ °ø±Þ°¡¾× ¼¼¾× ÆíÁý ºÒ°¡
+		if (column == 0 || column == 6 || column == 7) {
 			return false;
 		}
 		return true;
 	}
 
 	public boolean isCellEditable(int row, int column) {
-		// ´Ü°¡ °ø±Þ°¡¾× ÆíÁý ºÒ°¡
-		if (column == 5 || column == 6) {
+		// ³¯Â¥ °ø±Þ°¡¾× ¼¼¾× ÆíÁý ºÒ°¡
+		if (column == 0 || column == 6 || column == 7) {
 			return false;
 		}
 		return true;

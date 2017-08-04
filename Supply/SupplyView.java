@@ -2,28 +2,24 @@ package Supply;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import FrameComponent.ViewManager;
 import FrameComponent.WhitePanel;
-import Main.CsvPasser;
 import Main.Main;
 
 public class SupplyView extends WhitePanel{
 	JLabel sup[];
 	WhitePanel pane;
 	Font defaultFont;
+	Supply supply;
 	public SupplyView(ViewManager viewManager) {
 		defaultFont=new Font(Main.font,Font.BOLD, 15);
 		pane=this;
 		sup = new JLabel[8];
 		setBounds(358, 90, 500, 200);
+		supply=new Supply();
 		init();
 		loadSupply();
 	}
@@ -64,7 +60,6 @@ public class SupplyView extends WhitePanel{
 		pane.add(종목);
 		pane.add(전화);
 		pane.add(팩스);
-		
 		for (int i = 0; i < 8; i++) {
 			sup[i] = new JLabel();
 			sup[i].setFont(defaultFont);
@@ -83,31 +78,9 @@ public class SupplyView extends WhitePanel{
 	}
 	
 	void loadSupply() {
-		BufferedReader fr = null;
-		String st = null;
-		try {
-			fr = new BufferedReader(new FileReader("./supply.csv"));
-				for (int i = 0; i < 8; i++) {
-					st = fr.readLine();
-					String stn[] = CsvPasser.csvSplit(st);
-					sup[i].setText(stn[1]);
-				}
-			} catch (IOException e2) {
-				JOptionPane.showMessageDialog(null, "supply.csv를 불러올 수 없습니다.");
-			}
+		Main.dataReader.getQuery(supply, "SELECT * FROM SUPPLY");
+		setSupply(supply);
 		}
-	public Supply getSupply(){
-		Supply supply=new Supply();
-		supply.setNum(sup[0].getText());
-		supply.setCompany(sup[1].getText());
-		supply.setName(sup[2].getText());
-		supply.setAddress(sup[3].getText());
-		supply.setWork(sup[4].getText());
-		supply.setWork2(sup[5].getText());
-		supply.setTel(sup[6].getText());
-		supply.setFax(sup[7].getText());
-		return supply;
-	}
 	public void paint(Graphics g) {
 		super.paint(g);
 		g.setColor(Color.black);
@@ -126,14 +99,17 @@ public class SupplyView extends WhitePanel{
 		
 	}
 	public void setSupply(Supply supply) {
-		supply.setNum(supply.getNum());
-		supply.setCompany(supply.getCompany());
-		supply.setName(supply.getName());
-		supply.setAddress(supply.getAddress());
-		supply.setWork(supply.getWork());
-		supply.setWork2(supply.getWork2());
-		supply.setTel(supply.getTel());
-		supply.setFax(supply.getFax());
+		sup[0].setText(supply.getNum());
+		sup[1].setText(supply.getName());
+		sup[2].setText(supply.getWho());
+		sup[3].setText(supply.getAddress());
+		sup[4].setText(supply.getWork());
+		sup[5].setText(supply.getWork2());
+		sup[6].setText(supply.getTel());
+		sup[7].setText(supply.getFax());
+	}
+	public Supply getSupply() {
+		return supply;
 	}
 }
 

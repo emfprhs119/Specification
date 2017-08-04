@@ -2,12 +2,15 @@ package FrameComponent;
 import java.awt.CardLayout;
 import java.awt.Container;
 
+import javax.swing.JOptionPane;
+
 import Demand.Demand;
 import Demand.DemandView;
-import Estimate.Estimate;
 import Product.ProductView;
+import Specification.Specification;
+import Specification.SpecificationView;
 import Supply.SupplyView;
-
+enum COMPONENT{DEMAND,SUPPLY,PRODUCT}
 public class ViewManager {
 	public DemandView getDemandView() {
 		return demandView;
@@ -18,9 +21,13 @@ public class ViewManager {
 	public ProductView getProductView() {
 		return productView;
 	}
+	public SpecificationView getSpecificationView() {
+		return specificationView;
+	}
 	private DemandView demandView;
 	private SupplyView supplyView;
 	private ProductView productView;
+	private SpecificationView specificationView;
 	
 	Container contentPane;
 	private WhitePanel masterPanel;
@@ -33,30 +40,15 @@ public class ViewManager {
 		masterPanel.setBounds(32, 30, 800, 1000);
 		this.masterPanel=masterPanel;
 		this.frameLabel=frameLabel;
-		demandView = new DemandView(this);
+		demandView = new DemandView();
 		supplyView = new SupplyView(this);
 		productView = new ProductView(this);
-	}
-	public void setEstimate(Estimate est){
-		productView.setTableWidth(est.getTableWidth());
-		demandView.setDemand(est.getDemand());
-		supplyView.setSupply(est.getSupply());
-		productView.setProductList(est.getProductList());
-		productView.refresh();
-	}
-	
-	public Estimate getEstimate(){
-		Estimate est = new Estimate();
-		est.setTableWidth(productView.getTableWidth());
-		est.setDemand(demandView.getDemand());
-		est.setSupply(supplyView.getSupply());
-		est.setProductList(productView.getProductList());
-		return est;
+		specificationView = new SpecificationView();
 	}
 	public FrameLabel getFrameLabel(){
 		return frameLabel;
 	}
-	public void setDemand(Demand demand) {
+	public void setData(Demand demand) {
 		demandView.setDemand(demand);
 	}
 	public void setTableWidth(int[] tableWidth) {
@@ -66,5 +58,37 @@ public class ViewManager {
 		//front or back
 		cardLayout.show(masterPanel, str);
 		contentPane.repaint();
+	}
+	public void saveAll() {
+		Demand demand;
+		Specification specification;
+		if (!productView.getProductList().isHasData()){
+			JOptionPane.showMessageDialog(null, "데이터가 없습니다.");
+			return;
+		}
+		demand=demandView.getDemand();
+		if (demand.getName() == null || demand.getName().trim().equals("")){
+			JOptionPane.showMessageDialog(null, "상호가 비었습니다.");
+			return;
+		}
+		demand=demandView.saveCurrData();
+		specification=specificationView.saveCurrData(demandView);
+		productView.saveCurrData(specification.getIdQuery());
+		JOptionPane.showMessageDialog(null, "저장되었습니다.");
+		frameLabel.setSpec(specification);
+	}
+	public void modifyLoad() {
+		demandView.loadDataId(specificationView.getSpec().getName());
+		demandView.setDate(specificationView.getSpec().getDate());
+		productView.loadDataId(specificationView.getSpec().getId());
+		frameLabel.setSpec(specificationView.getSpec());
+	}
+	public void modifySave() {
+		productView.getProductList().removeQuery(frameLabel.getSpec().getId());
+		productView.saveCurrData(frameLabel.getSpec().getId());
+		JOptionPane.showMessageDialog(null, "저장되었습니다.");
+	}
+	public boolean isModify() {
+		return productView.isModify();
 	}
 }

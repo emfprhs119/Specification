@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Properties;
 
@@ -17,28 +16,51 @@ import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
-import FrameComponent.ViewManager;
 import FrameComponent.WhitePanel;
+import Inheritance.ColumnManager;
+import Inheritance.ListManager;
+import Inheritance.View_Interface;
 import Main.Main;
+/*
+class UtilCalendarModel extends AbstractDateModel<java.util.Calendar> {
+	
+	public UtilCalendarModel() {
+		this(null);
+	}
+	
+	public UtilCalendarModel(Calendar value) {
+		super();
+		setValue(value);
+	}
 
+	@Override
+	protected Calendar fromCalendar(Calendar from) {
+		return (Calendar)from.clone();
+	}
 
+	@Override
+	protected Calendar toCalendar(Calendar from) {
+		return (Calendar)from.clone();
+	}
+	
+}
+*/
 //거래처 view
-public class DemandView extends WhitePanel {
+public class DemandView extends WhitePanel implements View_Interface<Demand> {
 	WhitePanel leftPanel, rightPanel;
 	JPanel rightTextPanel[];
 	JPanel leftLabelPanel[];
 	JTextField rightTextField[];
-	DemandLoad demandLoad;
+	ListManager<Demand,DemandList> listManager;
 	UtilDateModel model;
 	JButton demandLoadButton; 
 
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	public DemandView(ViewManager viewManager) {
+	
+	public DemandView() {
 		model = new UtilDateModel();
 		Properties p = new Properties();
 		p.put("text.today", "Today");
@@ -46,31 +68,32 @@ public class DemandView extends WhitePanel {
 		p.put("text.year", "Year");
 		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
 		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateFormatter());
-		
-		setBounds(0, 124, 350, 290);
-		demandLoad = new DemandLoad(viewManager);
+		setBounds(0, 94, 350, 320);
+		initListManager();
 		leftPanel = new WhitePanel();
 		rightPanel = new WhitePanel();
-		leftPanel.setBounds(45, 4, 350, 120);
-		rightPanel.setBounds(15, 0, 115, 120);
+		leftPanel.setBounds(45, 4, 350, 150);
+		rightPanel.setBounds(15, 0, 115, 150);
 
 		rightTextPanel = new JPanel[5];
 		leftLabelPanel = new JPanel[5];
-		rightTextField = new JTextField[5];
+		rightTextField = new JTextField[6];
 		for (int i = 0; i < 5; i++) {
 			rightTextPanel[i] = new JPanel();
 			leftLabelPanel[i] = new JPanel();
 		}
-		JLabel leftLabel[] = new JLabel[5];
-		leftLabelPanel[0].add(leftLabel[0] = new JLabel("견 적 일 :"));
-		leftLabelPanel[1].add(leftLabel[1] = new JLabel("상      호 :"));
-		leftLabelPanel[2].add(leftLabel[2] = new JLabel("전화번호:"));
-		leftLabelPanel[3].add(leftLabel[3] = new JLabel("담 당 자 :"));
+		JLabel leftLabel[] = new JLabel[6];
+		leftLabelPanel[0].add(leftLabel[0] = new JLabel("발행일자:"));
+		leftLabelPanel[1].add(leftLabel[1] = new JLabel("등록번호:"));
+		leftLabelPanel[2].add(leftLabel[2] = new JLabel("상      호:"));
+		leftLabelPanel[3].add(leftLabel[3] = new JLabel("전화번호:"));
+		leftLabelPanel[4].add(leftLabel[4] = new JLabel("담 당 자 :"));
 
 		rightTextPanel[0].add(datePicker);
 		rightTextPanel[1].add(rightTextField[1] = new JTextField(14));
 		rightTextPanel[2].add(rightTextField[2] = new JTextField(14));
 		rightTextPanel[3].add(rightTextField[3] = new JTextField(14));
+		rightTextPanel[4].add(rightTextField[4] = new JTextField(14));
 		
 		demandLoadButton = new JButton("...");
 		demandLoadButton.setBounds(181,1,28,25);
@@ -79,12 +102,12 @@ public class DemandView extends WhitePanel {
 		
 		demandLoadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				demandLoad.setVisible(true);
+				listManager.setVisible(true);
 			}
 		});
 		rightTextPanel[1].add(demandLoadButton);
 		model.setSelected(true);
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 5; i++) {
 			
 			rightTextPanel[i].setBounds(80, i*30+5, 210, 32);
 			leftLabelPanel[i].setBounds(10, i * 30, 105, 35);
@@ -100,39 +123,47 @@ public class DemandView extends WhitePanel {
 				rightTextField[i].addKeyListener(new DemandListener(i,rightTextField));
 			}
 			rightPanel.add(leftLabelPanel[i]);
-			leftPanel.add(rightTextPanel[3 - i]);
+			leftPanel.add(rightTextPanel[4 - i]);
 		}
 		
 		//위치 조정
 		rightTextPanel[0].setBounds(15, 0, 346, 200);
 		leftLabelPanel[1].setBounds(10 - 1, 1 * 30, 105, 35);
 		leftLabelPanel[2].setBounds(10 - 3, 2 * 30, 105, 35);
-		panelInit(this);
+
+		this.add(rightPanel);
+		this.add(leftPanel);
 	}
 
-	void panelInit(WhitePanel mainPanel) {
-
-		mainPanel.add(rightPanel);
-		mainPanel.add(leftPanel);
+	private void initListManager() {
+		ColumnManager column=new ColumnManager();
+		String strArr[] = { "상호", "등록번호", "담당자" };
+		int intArr[] = {120,40,10};
+		column.setColumn(strArr,intArr);
+		listManager = new ListManager<Demand,DemandList>("거래처 불러오기",this,new DemandList(),column,true);
+		new DemandAdd(listManager);
 	}
 
 	public void setDemand(Demand demand) {
-		if (demand.getDate() != null) {
-			String[] token = demand.getDate().split("-");
-			model.setDate(Integer.parseInt(token[0]), Integer.parseInt(token[1])-1, Integer.parseInt(token[2]));
-			model.setSelected(true);
-		}
-		rightTextField[1].setText(demand.getName());
-		rightTextField[2].setText(demand.getTel());
-		rightTextField[3].setText(demand.getWho());
+		rightTextField[1].setText(demand.getRegNum());
+		rightTextField[2].setText(demand.getName());
+		rightTextField[3].setText(demand.getTel());
+		rightTextField[4].setText(demand.getWho());
 	}
+	public String getDate(){
+		return Main.fullDateFormat.format(model.getValue());//datePicker.get;
+	}
+	public void setDate(String date){
+			String[] token = date.split("\\.");
+			model.setDate(Integer.parseInt(token[0]), Integer.parseInt(token[1])-1, Integer.parseInt(token[2]));
 
+	}
 	public Demand getDemand() {
 		Demand demand = new Demand();
-		demand.setDate(sdf.format(model.getValue()));//datePicker.get;
-		demand.setName(rightTextField[1].getText());
-		demand.setTel(rightTextField[2].getText());
-		demand.setWho(rightTextField[3].getText());
+		demand.setRegNum(rightTextField[1].getText());
+		demand.setName(rightTextField[2].getText());
+		demand.setTel(rightTextField[3].getText());
+		demand.setWho(rightTextField[4].getText());
 		return demand;
 	}
 
@@ -140,25 +171,38 @@ public class DemandView extends WhitePanel {
 		this.repaint();
 	}
 
-	public void addDemand(){
-		demandLoad.addDemand(getDemand());
+	public Demand saveCurrData(){
+		Demand demand=getDemand();
+		if (!listManager.isHas(demand))
+			listManager.addItem(demand);
+
+		if (demand.getName()==null || demand.getName().equals(""))
+			return null;
+		else
+			return demand;
 	}
+
+	@Override
+	public void loadData(Demand demand) {
+		setDemand(demand);
+	}
+	public void loadDataId(String name) {
+		setDemand(listManager.getObject(name));
+	}
+
 }
 class DateFormatter extends AbstractFormatter {
 
-	private String datePattern = "yyyy-MM-dd";
-	private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
-
 	@Override
 	public Object stringToValue(String text) throws ParseException {
-		return dateFormatter.parseObject(text);
+		return Main.fullDateFormat.parseObject(text);
 	}
 
 	@Override
 	public String valueToString(Object value) throws ParseException {
 		if (value != null) {
 			Calendar cal = (Calendar) value;
-			return dateFormatter.format(cal.getTime());
+			return Main.fullDateFormat.format(cal.getTime());
 		}
 		return "";
 	}
@@ -172,7 +216,7 @@ class DemandListener extends KeyAdapter{
 	}
 		public void keyPressed(KeyEvent keyEvent) {
 			if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
-				if (key != 3)
+				if (key != 4)
 					textField[key + 1].requestFocus();
 			} else
 				Main.modify = true;
