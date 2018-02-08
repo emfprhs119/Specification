@@ -18,7 +18,7 @@ public class FrameMenuBar {
 		menuItems[0] = new MenuItem("새 견적서"); 
 		menuItems[1] = new MenuItem("불러오기");
 		menuItems[2] = new MenuItem("저장하기");
-		menuItems[3] = new MenuItem("공급자 변경");
+		menuItems[3] = new MenuItem("공급자 수정");
 		menuItems[4] = new MenuItem("인쇄하기");
 		menuItems[5] = new MenuItem("종료");
 		for(MenuItem menuItem:menuItems){

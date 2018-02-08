@@ -16,6 +16,19 @@ public class SupplyModify extends JFrame {
 	JTextField textField[];
 	SupplyView supplyView;
 	final int size=8;
+	public void setVisible(boolean b){
+		if (b){
+			textField[0].setText(supplyView.supply.getNum());
+			textField[1].setText(supplyView.supply.getName());
+			textField[2].setText(supplyView.supply.getWho());
+			textField[3].setText(supplyView.supply.getAddress());
+			textField[4].setText(supplyView.supply.getWork());
+			textField[5].setText(supplyView.supply.getWork2());
+			textField[6].setText(supplyView.supply.getTel());
+			textField[7].setText(supplyView.supply.getFax());
+		}
+		super.setVisible(b);
+	}
 	SupplyModify(final SupplyView supplyView) {
 		super("공급자 변경");
 		this.supplyView=supplyView;
@@ -56,6 +69,7 @@ public class SupplyModify extends JFrame {
 			rightPanel.add(rightTextPanel[i]);
 			
 		}
+		
 		JButton button = new JButton("확인");
 		button.setFont(new Font(Main.font, 0, 12));
 		button.setBounds(200, 210, 60, 20);

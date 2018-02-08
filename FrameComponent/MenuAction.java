@@ -55,7 +55,7 @@ public class MenuAction extends MouseAdapter implements ActionListener {
 		case "저장하기":
 			function.save();
 			break;
-		case "공급자 변경":
+		case "공급자 수정":
 			function.modifySupply();
 		case "◀ 이전":
 			function.leftPage();

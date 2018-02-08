@@ -19,7 +19,7 @@ public class SupplyView extends WhitePanel{
 		defaultFont=new Font(Main.font,Font.BOLD, 15);
 		pane=this;
 		sup = new JLabel[8];
-		setBounds(358, 90, 500, 200);
+		setBounds(358, 90, 380, 200);
 		supply=new Supply();
 		supplyModify=new SupplyModify(this);
 		init();
