@@ -14,23 +14,32 @@ public class FrameMenuBar {
 		menus[0] = new Menu("파일"); 
 		menus[1] = new Menu("도움말");
 		//---------------------------------------
-		menuItems = new MenuItem[5];
+		menuItems = new MenuItem[6];
 		menuItems[0] = new MenuItem("새 견적서"); 
 		menuItems[1] = new MenuItem("불러오기");
 		menuItems[2] = new MenuItem("저장하기");
-		//menuItems[3] = new MenuItem("공급자 수정");
-		menuItems[3] = new MenuItem("인쇄하기");
-		menuItems[4] = new MenuItem("종료");
-		
+		menuItems[3] = new MenuItem("공급자 변경");
+		menuItems[4] = new MenuItem("인쇄하기");
+		menuItems[5] = new MenuItem("종료");
 		for(MenuItem menuItem:menuItems){
 			menuItem.addActionListener(action);
-			menus[0].add(menuItem);
+			
 		}
+		menus[0].add(menuItems[0]);
+		menus[0].addSeparator();
+		menus[0].add(menuItems[1]);
+		menus[0].add(menuItems[2]);
+		menus[0].addSeparator();
+		menus[0].add(menuItems[3]);
+		menus[0].addSeparator();
+		menus[0].add(menuItems[4]);
+		menus[0].addSeparator();
+		menus[0].add(menuItems[5]);
 		//---------------------------------------
 		
-		menuItems = new MenuItem[2];
-		menuItems[0] = new MenuItem("도움말");
-		menuItems[1] = new MenuItem("About 견적서");
+		menuItems = new MenuItem[1];
+		//menuItems[0] = new MenuItem("도움말");
+		menuItems[0] = new MenuItem("About 명세서");
 		for(MenuItem menuItem:menuItems){
 			menuItem.addActionListener(action);
 			menus[1].add(menuItem);

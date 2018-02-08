@@ -20,7 +20,7 @@ import Main.Main;
 class DemandAdd extends JFrame  {
 	JTextField textField[];
 	DemandAdd(ListManager<Demand,DemandList> listManager) {
-		super("거래처 수가하기");
+		super("거래처 추가");
 		setLayout(null);
 		setBounds(500, 500, 235, 200);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

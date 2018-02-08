@@ -29,7 +29,9 @@ public class Function {
 	public void load() {// 불러오기
 		viewManager.getSpecificationView().getListManager().setVisible(true);
 	}
-
+	public void modifySupply(){
+		viewManager.getSupplyView().modify();
+	}
 	// 이전 페이지
 	public void leftPage() {
 		if (viewManager.getProductView().getCurrPage() > 1) {

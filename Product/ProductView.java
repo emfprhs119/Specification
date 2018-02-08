@@ -143,7 +143,8 @@ public class ProductView implements View_Interface<ProductList> {
 
 		frontTablePanel.add(frontScroll);
 		backTablePanel.add(backScroll);
-
+		today = viewManager.getDemandView().getDate().substring(5);
+		frontTable.setValueAt(today,0,0);
 		prevProductList.tableToData(frontTable, 0);
 		valueChangedUpdate(frontTable);
 
@@ -390,12 +391,13 @@ public class ProductView implements View_Interface<ProductList> {
 					else
 						showDatePopup(backTablePanel, e.getPoint(), true);
 				} else{
-					
+					/*
 					showDatePopup(null, null, false);
 					if (table.getSelectedColumn() < 6 && table.getValueAt(table.getSelectedRow(), 0)==null){
 						today = viewManager.getDemandView().getDate().substring(5);
 						table.setValueAt(today,table.getSelectedRow(),0);
 					}
+					*/
 					
 				}
 			}
@@ -464,7 +466,7 @@ public class ProductView implements View_Interface<ProductList> {
 						if (table.getRowCount() > table.getSelectedRow() + 1) {
 							table.setColumnSelectionInterval(1, 1);
 							table.setRowSelectionInterval(table.getSelectedRow() + 1, table.getSelectedRow() + 1);
-							if (table.getValueAt(table.getSelectedRow(), 0) == null) {
+							if (table.getValueAt(table.getSelectedRow(), 0) == null ||table.getValueAt(table.getSelectedRow(), 0) == "") {
 								table.setValueAt(table.getValueAt(table.getSelectedRow() - 1, 0), table.getSelectedRow(), 0);
 							}
 						}
@@ -497,12 +499,13 @@ public class ProductView implements View_Interface<ProductList> {
 						Main.modify = true;
 					}
 				}
-				valueChangedUpdate(table);
 				*/
+				valueChangedUpdate(table);
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
+				valueChangedUpdate(table);
 			}
 		});
 		

@@ -1,0 +1,86 @@
+-- 품목
+CREATE TABLE "ITEM" (
+	"ITEM_ID"       NUMERIC      NOT NULL, -- 품목식별자
+	"ITEM_CODE"     NUMERIC      NULL,     -- 품목코드
+	"ITEM_NAME"     VARCHAR(255) NOT NULL, -- 품목이름
+	"ITEM_STANDARD" VARCHAR(255) NULL,      -- 규격
+PRIMARY KEY (
+			"ITEM_ID" -- 품목식별자
+		)
+);
+
+-- 명세서_품목
+CREATE TABLE "SPEC_ITEM" (
+	"SPEC_ID"   NUMERIC NOT NULL, -- 명세서식별자
+	"DATE"      DATE    NOT NULL, -- 날짜
+	"ITEM_ID"   NUMERIC NOT NULL, -- 품목식별자
+	"COUNT"     INTEGER NULL,     -- 수량
+	"ITEM_COST" NUMERIC NULL,      -- 품목단가
+FOREIGN KEY (
+			"ITEM_ID" -- 품목식별자
+		)
+		REFERENCES "ITEM" ( -- 품목
+			"ITEM_ID" -- 품목식별자
+		)
+FOREIGN KEY (
+			"SPEC_ID" -- 명세서식별자
+		)
+		REFERENCES "SPEC" ( -- 명세서
+			"SPEC_ID" -- 명세서식별자
+		)
+);
+
+-- 거래처
+CREATE TABLE "DEMAND" (
+	"DEM_REG_NUM" VARCHAR(20) NOT NULL, -- 등록번호
+	"DEM_NAME"    VARCHAR(80) NULL, -- 거래처명
+	"DEM_WHO"     VARCHAR(50) NULL,     -- 담당자
+	"DEM_TEL"     VARCHAR(20) NULL,      -- 전화번호
+PRIMARY KEY (
+			"DEM_NAME" -- 등록번호
+		)
+);
+-- 공급자
+CREATE TABLE "SUPPLY" (
+	"SUP_REG_NUM" VARCHAR(20)  NOT NULL, -- 사업자 등록번호
+	"SUP_NAME"    VARCHAR(80)  NOT NULL, -- 상호
+	"SUP_WHO"     VARCHAR(50)  NULL,     -- 대표
+	"SUP_ADDR"    VARCHAR(255) NULL,     -- 주소
+	"SUP_WORK"    VARCHAR(60)  NULL,     -- 업태
+	"SUP_WORK2"   VARCHAR(60)  NULL,     -- 종목
+	"SUP_TEL"     VARCHAR(20)  NULL,     -- 전화
+	"SUP_FAX"     VARCHAR(20)  NULL,      -- 팩스
+PRIMARY KEY (
+			"SUP_REG_NUM" -- 사업자 등록번호
+		)
+);
+
+-- 명세서
+CREATE TABLE "SPEC" (
+	"SPEC_ID"     NUMERIC     NOT NULL, -- 명세서식별자
+	"DEM_NAME" VARCHAR(20) NOT NULL, -- 등록번호
+	"ISSUE_DATE"  DATE        NOT NULL, -- 발행일
+	"DAY_NUM"     NUMERIC     NOT NULL,  -- 명세번호
+PRIMARY KEY (
+			"SPEC_ID" -- 명세서식별자
+		)
+FOREIGN KEY (
+			"DEM_NAME" -- 등록번호
+		)
+		REFERENCES "DEMAND" ( -- 거래처
+			"DEM_NAME" -- 등록번호
+		)
+);
+
+-- 명세서 카운드
+CREATE TABLE "SPEC_ID_COUNT" (
+	"COUNT_ID"	NUMERIC     NOT NULL,
+PRIMARY KEY (
+			"COUNT_ID" -- 명세서식별자
+		)
+);
+
+CREATE VIEW PRODUCT
+AS 	SELECT SPEC_ID,DATE,ITEM_CODE,ITEM_NAME,ITEM_STANDARD,COUNT,ITEM_COST
+	FROM SPEC_ITEM,ITEM
+	WHERE SPEC_ITEM.ITEM_ID=ITEM.ITEM_ID;

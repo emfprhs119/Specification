@@ -7,14 +7,18 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import Demand.DemandView;
 import FrameComponent.Function;
@@ -53,11 +57,11 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		try {
 			printImage = ImageIO.read(getClass().getClassLoader().getResource("resources/print.png"));
-			stampImage = ImageIO.read(getClass().getClassLoader().getResource("resources/stamp.png"));
-			
-
-			
+			stampImage = ImageIO.read(new File("stamp.png"));
+			//ImageIO.read(getClass().getClassLoader().getResource("resources/stamp.png"));
 		} catch (IOException e1) {
+			JOptionPane.showConfirmDialog(null, "stamp.png 가 없습니다.", "에러", JOptionPane.CLOSED_OPTION,
+					JOptionPane.ERROR_MESSAGE);
 			e1.printStackTrace();
 		}
 		initListManager();
@@ -89,6 +93,23 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 			button[i].setToolTipText(button[i].getText());
 			add(button[i]);
 		}
+		button[3].addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int choice = JOptionPane.showConfirmDialog(null, "외곽선을 출력하시겠습니까?", "외곽선", JOptionPane.YES_NO_OPTION,
+						JOptionPane.INFORMATION_MESSAGE);
+				switch (choice) {
+				case 0:
+					outline=true;
+					break;
+				case 1:
+					outline=false;
+					break;
+				}
+			}
+			
+		});
 	};
 
 	private void initListManager() {

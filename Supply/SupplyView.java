@@ -14,12 +14,14 @@ public class SupplyView extends WhitePanel{
 	WhitePanel pane;
 	Font defaultFont;
 	Supply supply;
+	SupplyModify supplyModify;
 	public SupplyView(ViewManager viewManager) {
 		defaultFont=new Font(Main.font,Font.BOLD, 15);
 		pane=this;
 		sup = new JLabel[8];
 		setBounds(358, 90, 500, 200);
 		supply=new Supply();
+		supplyModify=new SupplyModify(this);
 		init();
 		loadSupply();
 	}
@@ -79,7 +81,12 @@ public class SupplyView extends WhitePanel{
 	
 	void loadSupply() {
 		Main.dataReader.getQuery(supply, "SELECT * FROM SUPPLY");
-		setSupply(supply);
+		if (supply.getName()==null)
+			return;
+		else{
+			setSupply(supply);
+			repaint();//¹®Á¦
+		}
 		}
 	public void paint(Graphics g) {
 		super.paint(g);
@@ -110,6 +117,9 @@ public class SupplyView extends WhitePanel{
 	}
 	public Supply getSupply() {
 		return supply;
+	}
+	public void modify() {
+		supplyModify.setVisible(true);
 	}
 }
 

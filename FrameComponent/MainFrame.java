@@ -2,16 +2,8 @@ package FrameComponent;
 
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -22,8 +14,8 @@ public class MainFrame extends JFrame {
 	private Container contentPane;
 	private ViewManager viewManager;
 	private Function function;
-	private boolean question;
-	private Image helpImage;
+	//private boolean question;
+	//private Image helpImage;
 	protected void frameInit() {
 		super.frameInit();
 		setBounds(200, 0, 838, 1045-184);
@@ -33,12 +25,14 @@ public class MainFrame extends JFrame {
 		contentPane = this.getContentPane();
 		contentPane.setLayout(null);
 		contentPane.setBackground(Color.WHITE);
+		/*
 		contentPane.addMouseListener(new MouseAdapter(){
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				helpPopup(false);
 			}
 		});
+		*/
 	}
 
 	public MainFrame(int x, int y) {
@@ -48,13 +42,16 @@ public class MainFrame extends JFrame {
 
 	public MainFrame() {
 		super(Main.name);
+		/*
 		question=false;
+		
 		try {
 			helpImage=ImageIO.read(getClass().getClassLoader().getResource("resources/help.png"));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		*/
 		// 이름,파일,페이지 레이블 초기화
 		FrameLabel frameLabel = new FrameLabel();
 
@@ -128,6 +125,7 @@ public class MainFrame extends JFrame {
 		});
 		setVisible(true);
 	}
+	/*
 	public void helpPopup(boolean flag){
 		question=flag;
 		repaint();
@@ -136,10 +134,11 @@ public class MainFrame extends JFrame {
 		super.paint(g);
 		if (question) {
 			Graphics2D g2 = (Graphics2D) g.create();
-			g2.drawImage(helpImage, 0, 0, null);
+			//g2.drawImage(helpImage, 0, 0, null);
 			g2.dispose();
 
 		}
 	}
+	*/
 	
 }

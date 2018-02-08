@@ -1,4 +1,5 @@
 package Main;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,7 +14,7 @@ import Inheritance.GetResultSet;
 
 public class DataReader {
 	private Connection connection;
-	private String dbFileName;
+	private String dbFileName="data.db";
 	private boolean isOpened = false;
 	static {
 		try {
@@ -23,8 +24,13 @@ public class DataReader {
 		}
 	}
 
-	public DataReader(String databaseFileName) {
-		this.dbFileName = databaseFileName;
+	public DataReader() {
+		File file=new File(dbFileName);
+		if (!file.exists()){
+			JOptionPane.showConfirmDialog(null, "data.db 파일이 필요합니다.", "오류", JOptionPane.CLOSED_OPTION,
+					JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
+		}
 	}
 
 	public boolean open() {
@@ -55,6 +61,7 @@ public class DataReader {
 		try {
 			PreparedStatement prep = this.connection.prepareStatement(query);
 			ResultSet rs = prep.executeQuery();
+			
 			while(rs.next()){
 			dataSet.getRs(rs);
 			}
