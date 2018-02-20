@@ -30,7 +30,7 @@ public class SpecFrameAction implements ActionListener {
 			spec.next();
 			break;
 		case "편집":
-			if (Main.modify) {
+			if (function.getViewManager().isModify()) {
 				int choice = JOptionPane.showConfirmDialog(null, "변경 내용을 저장하시겠습니까?", "편집", JOptionPane.YES_NO_CANCEL_OPTION,
 						JOptionPane.INFORMATION_MESSAGE);
 				switch (choice) {
@@ -50,8 +50,12 @@ public class SpecFrameAction implements ActionListener {
 			spec.setVisible(false);
 			break;
 		case "인쇄":
-			function.printOut();
+			function.printOutPrinter();
 			break;
+		case "pdf":
+			function.printOutPdf();
+			break;
+			
 		case "닫기":
 			spec.setVisible(false);
 			break;

@@ -1,6 +1,5 @@
 package FrameComponent;
 
-import Main.Main;
 import Output.Print;
 import Specification.SpecificationView;
 
@@ -23,7 +22,6 @@ public class Function {
 		} else {
 			viewManager.modifySave();
 		}
-		Main.modify = false;
 	}
 
 	public void load() {// 불러오기
@@ -57,9 +55,9 @@ public class Function {
 	}
 
 	// 출력
-	public void printOut() {
+	public void printOutPrinter() {
 		SpecificationView specView = viewManager.getSpecificationView();
-		if (Main.modify) {
+		if (viewManager.isModify()) {
 			save();
 		}
 		if (frameLabel.getSpec() != null) {
@@ -69,6 +67,19 @@ public class Function {
 			print.printToPrinter(specView);
 		}
 	}
+	public void printOutPdf() {
+		SpecificationView specView = viewManager.getSpecificationView();
+		if (viewManager.isModify()) {
+			save();
+		}
+		if (frameLabel.getSpec() != null) {
+			specView.loadData(frameLabel.getSpec());
+			print.printToPdf(specView);
+		} else if (specView.isVisible()) {
+			print.printToPdf(specView);
+		}
+	}
+	
 
 	public void modify() {
 		viewManager.modifyLoad();
@@ -79,5 +90,10 @@ public class Function {
 	void refresh() {
 		viewManager.getProductView().refresh();
 		frameLabel.setPageText(viewManager.getProductView().getPageStr());
+	}
+
+	public ViewManager getViewManager() {
+		// TODO Auto-generated method stub
+		return viewManager;
 	}
 }

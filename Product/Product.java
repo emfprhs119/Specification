@@ -182,6 +182,8 @@ public class Product implements Model_Interface {
 	public String getDate() {
 		if (date == null)
 			return "";
+		if (date.length()==4)
+			date="0"+date;
 		return date;
 	}
 

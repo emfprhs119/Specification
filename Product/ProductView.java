@@ -14,7 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Properties;
 
-import javax.swing.DefaultCellEditor;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -70,7 +70,7 @@ public class ProductView implements View_Interface<ProductList> {
 	String funcStr[] = { "행 추가 (ctrl+shift+a)", "행 제거 (ctrl+shift+d)", "행 복사 (ctrl+shift+c)", "행 잘라내기 (ctrl+shift+x)",
 			"행 붙여넣기 (ctrl+shift+v)", "행 올리기 (ctrl+shift+up)", "행 내리기 (ctrl+shift+down)", "셀 복사 (ctrl+c)",
 			"셀 잘라내기 (ctrl+x)", "셀 붙여넣기 (ctrl+v)" };
-	Clipboard clipboard;
+	DefClipboard clipboard;
 	String prevText;
 	ViewManager viewManager;
 	String today;
@@ -91,7 +91,7 @@ public class ProductView implements View_Interface<ProductList> {
 		prevProductList=new ProductList();
 
 		initListManager();
-		clipboard = new Clipboard();
+		clipboard = new DefClipboard();
 		Object frontRow[][] = new Object[Main.FrontRow][8]; // 전면 테이블 행렬
 		Object backRow[][] = new Object[Main.BackRow][8]; // 후면 테이블 행렬
 		Object column[] = { "월일", "품목코드", "품목", "규격", "수량", "단가", "공급가액", "세액" };
@@ -269,13 +269,15 @@ public class ProductView implements View_Interface<ProductList> {
 		selx = table.getSelectedColumn();
 		sely = table.getSelectedRow();
 
-		DefaultCellEditor singleclick = new DefaultCellEditor(new JTextField());
-	    singleclick.setClickCountToStart(1);
+		//DefaultCellEditor singleclick = new DefaultCellEditor(new JTextField());
+	    //singleclick.setClickCountToStart(1);
 
 	    //set the editor as default on every column
+		/*
 	    for (int i = 0; i < table.getColumnCount(); i++) {
 	        table.setDefaultEditor(table.getColumnClass(i), singleclick);
 	    } 
+	    */
 		// 잘못된 데이터를 걸러내고 단가와 공급가액 입력
 		for (int i = 0; i < max; i++) {
 			mulData = 0;
@@ -340,7 +342,12 @@ public class ProductView implements View_Interface<ProductList> {
 
 	void clipboardPaste(JTable table) { // 붙여넣기
 		if (table.getSelectedColumn() != 0 && table.getSelectedColumn() != 6 && table.getSelectedColumn() != 7) {
-			productList.setData(clipboard.pasteData(), table.getSelectedRow() + getIndex(), table.getSelectedColumn());
+			try {
+				productList.setData(clipboard.pasteData(), table.getSelectedRow() + getIndex(), table.getSelectedColumn());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -372,7 +379,10 @@ public class ProductView implements View_Interface<ProductList> {
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN); // 가로 크기 조절 가능
 		table.setDragEnabled(false);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 한 셀만 선택
-																		// 가능
+
+		KeyStroke ks = KeyStroke.getKeyStroke("control C");
+		table.getInputMap().put(ks, "dummy");
+		table.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(ks, "testAction");
 		table.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "selectNextColumnCell");
 		table.getInputMap().put(KeyStroke.getKeyStroke("RIGHT"), "selectNextColumnCell");
 		table.addMouseListener(new MouseAdapter() {

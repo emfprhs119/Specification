@@ -39,6 +39,7 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 	private Supply supply;
 	private String date;
 	private String demand;
+	private String no;
 	private StringPlace sp[];
 	long sumPrice, sumTax;
 	private Font veryLargeFont = new Font(null, Font.BOLD, 23);
@@ -58,7 +59,6 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 		try {
 			printImage = ImageIO.read(getClass().getClassLoader().getResource("resources/print.png"));
 			stampImage = ImageIO.read(new File("stamp.png"));
-			//ImageIO.read(getClass().getClassLoader().getResource("resources/stamp.png"));
 		} catch (IOException e1) {
 			JOptionPane.showConfirmDialog(null, "stamp.png 가 없습니다.", "에러", JOptionPane.CLOSED_OPTION,
 					JOptionPane.ERROR_MESSAGE);
@@ -77,14 +77,15 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 	}
 
 	private void buttonInit(SpecFrameAction specAction) {
-		Rectangle bSize = new Rectangle(80, 550, 132, 45);
-		JButton button[] = new JButton[5];
+		Rectangle bSize = new Rectangle(45, 550, 120, 45);
+		JButton button[] = new JButton[6];
 		button[0] = new JButton("◀ 이전");
 		button[1] = new JButton("다음 ▶");
 		button[2] = new JButton("편집");
 		button[3] = new JButton("인쇄");
-		button[4] = new JButton("닫기");
-		for (int i = 0; i < 5; i++) {
+		button[4] = new JButton("pdf");
+		button[5] = new JButton("닫기");
+		for (int i = 0; i < 6; i++) {
 			button[i].setBounds(bSize);
 			bSize.x += bSize.width + 3;
 			button[i].setFont(new Font(Main.font, Font.BOLD, 22));
@@ -148,9 +149,9 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 	@Override
 	public void loadData(Specification spec) {
 		this.spec = spec;
-		page = 1;
 		date = spec.getDate();
 		demand = spec.getName();
+		no = String.valueOf(spec.getNo());
 		productList.loadList(spec.getIdQuery());
 		Main.dataReader.getQuery(supply, "SELECT * FROM SUPPLY");
 
@@ -202,15 +203,14 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 			y += 19;
 		}
 		// SUM_PRICE
-		sp[11] = new StringPlace(Main.longToMoneyString(sumPrice), x + 613, 510, ALIGN.RIGHT);
-		sp[12] = new StringPlace(Main.longToMoneyString(sumTax), x + 697, 510, ALIGN.RIGHT);
+		sp[11] = new StringPlace(Main.longToMoneyString(sumPrice), x + 613, 507, ALIGN.RIGHT);
+		sp[12] = new StringPlace(Main.longToMoneyString(sumTax), x + 697, 507, ALIGN.RIGHT);
 		sp[13] = new StringPlace(Main.longToMoneyString(sumPrice + sumTax), 250, 193, ALIGN.LEFT);
 		repaint();
 	}
 
 	public void paint(Graphics g) {
 		super.paint(g);
-		// Graphics2D g2 = (Graphics2D) g.create();
 		g.drawImage(printImage, 0, 20, null);
 
 		g.setFont(veryLargeFont);
@@ -232,6 +232,7 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 		g2d.translate(7, -31);
 		if (outline) {
 			g.drawImage(printImage, 0, 20, null);
+			g.drawString("(공급받는자 보관용)", 320, 128);
 		}
 		g2d.setFont(veryLargePrintFont);
 		g2d.drawString(sp[13].str, (sp[13].x + sp[13].getAlignX(g)), (int) (sp[13].y));
@@ -247,6 +248,7 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 		g2d.translate(0, pageFormat.getImageableHeight() / 2 + 164);// pageFormat.getImageableY());
 		if (outline) {
 			g.drawImage(printImage, 0, 20, null);
+			g.drawString("(공급자 보관용)", 333, 128);
 			g2d.drawString(
 					"-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------",
 					0, 36);
@@ -292,5 +294,19 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 
 	public String getDate() {
 		return date;
+	}
+	
+	public String getNo() {
+		return no;
+	}
+	
+	public String getDemand() {
+		// TODO Auto-generated method stub
+		return demand;
+	}
+
+	public StringPlace[] getSp() {
+		// TODO Auto-generated method stub
+		return sp;
 	}
 }

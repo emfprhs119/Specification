@@ -218,7 +218,6 @@ class DemandListener extends KeyAdapter{
 			if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
 				if (key != 4)
 					textField[key + 1].requestFocus();
-			} else
-				Main.modify = true;
+			} 
 		}
 }

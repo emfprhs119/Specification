@@ -7,6 +7,7 @@ import FrameComponent.MainFrame;
 
 
 public class Main {
+	public static String virsion = "1.1";
 	public static String name = "거래명세서";
 	public final static Color YELLOW = Color.getHSBColor((float) 0.160, (float) 0.42, (float) 0.98);
 	public static String font = "Serif"; 	//default font
@@ -14,7 +15,6 @@ public class Main {
 	public static int tableSize[]={45,70,205,105,50,75,95,80}; //default tableSize
 	public static int FrontRow=14; // 전면 리스트 행수
 	public static int BackRow = 25; // 후면 리스트 행수
-	public static boolean modify=false; //프로그램 수정여부(종료시 저장 여부 확인)
 	public static DataReader dataReader;
 	public static SimpleDateFormat fullDateFormat;
 	public static SimpleDateFormat dateFormat;

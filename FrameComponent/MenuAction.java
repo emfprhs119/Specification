@@ -29,7 +29,7 @@ public class MenuAction extends MouseAdapter implements ActionListener {
 		// 이름에 따른 함수 호출
 		switch (str) {
 		case "새 명세서":
-			if (Main.modify) {
+			if (function.getViewManager().isModify()) {
 				int choice = JOptionPane.showConfirmDialog(null, "변경 내용을 저장하시겠습니까?", "종료", JOptionPane.YES_NO_CANCEL_OPTION,
 						JOptionPane.INFORMATION_MESSAGE);
 				switch (choice) {
@@ -64,10 +64,10 @@ public class MenuAction extends MouseAdapter implements ActionListener {
 			function.rightPage();
 			break;
 		case "인쇄하기":
-			function.printOut();
+			function.printOutPrinter();
 			break;
 		case "종료":
-			if (Main.modify) {
+			if (function.getViewManager().isModify()) {
 				int choice = JOptionPane.showConfirmDialog(null, "변경 내용을 저장하시겠습니까?", "종료", JOptionPane.YES_NO_CANCEL_OPTION,
 						JOptionPane.INFORMATION_MESSAGE);
 				switch (choice) {
@@ -88,7 +88,7 @@ public class MenuAction extends MouseAdapter implements ActionListener {
 			//((MainFrame) frame).helpPopup(true);
 			break;
 		case "About 명세서":
-			JOptionPane.showMessageDialog(frame, "Version : v1.0\nEmail : emfprhs119@gmail.com", "About 명세서",1);
+			JOptionPane.showMessageDialog(frame, "Version : v"+Main.virsion+"\nEmail : emfprhs119@gmail.com", "About 명세서",1);
 			break;
 		default:
 		}
