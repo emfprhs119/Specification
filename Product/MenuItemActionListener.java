@@ -10,7 +10,6 @@ class MenuItemActionListener implements ActionListener {
 	JTable table;
 	ProductView productView;
 	ProductList productList;
-	DefClipboard clipboard;
 
 	MenuItemActionListener(ProductView productView, JTable currTable) {
 		this.productView = productView;

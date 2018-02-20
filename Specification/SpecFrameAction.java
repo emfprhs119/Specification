@@ -7,7 +7,6 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import FrameComponent.Function;
-import Main.Main;
 
 public class SpecFrameAction implements ActionListener {
 

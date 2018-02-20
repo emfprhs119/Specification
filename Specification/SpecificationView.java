@@ -30,10 +30,10 @@ import Product.Product;
 import Product.ProductList;
 import Supply.Supply;
 
-public class SpecificationView extends JFrame implements View_Interface<Specification>, Printable {
+public class SpecificationView extends JFrame implements View_Interface<Specification> {
 	private Specification spec;
 	private Container contentPane;
-	private Image printImage,stampImage;
+	private Image printImage;
 	private ListManager<Specification, SpecificationList> listManager;
 	private ProductList productList;
 	private Supply supply;
@@ -46,9 +46,6 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 	private Font largeFont = new Font(null, Font.BOLD, 19);
 	private Font font = new Font(null, Font.BOLD, 12);
 
-	private Font veryLargePrintFont = new Font(null, Font.BOLD, 23);
-	private Font largePrintFont = new Font(null, Font.PLAIN, 19);
-	private Font printfont = new Font(null, Font.PLAIN, 12);
 	private int page, maxPage;
 	private boolean outline;
 
@@ -58,7 +55,7 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		try {
 			printImage = ImageIO.read(getClass().getClassLoader().getResource("resources/print.png"));
-			stampImage = ImageIO.read(new File("stamp.png"));
+			
 		} catch (IOException e1) {
 			JOptionPane.showConfirmDialog(null, "stamp.png 가 없습니다.", "에러", JOptionPane.CLOSED_OPTION,
 					JOptionPane.ERROR_MESSAGE);
@@ -205,14 +202,33 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 		// SUM_PRICE
 		sp[11] = new StringPlace(Main.longToMoneyString(sumPrice), x + 613, 507, ALIGN.RIGHT);
 		sp[12] = new StringPlace(Main.longToMoneyString(sumTax), x + 697, 507, ALIGN.RIGHT);
-		sp[13] = new StringPlace(Main.longToMoneyString(sumPrice + sumTax), 250, 193, ALIGN.LEFT);
+		sp[13] = new StringPlace(Main.longToMoneyString(sumPrice + sumTax), 255, 193, ALIGN.LEFT);
 		repaint();
 	}
 
 	public void paint(Graphics g) {
 		super.paint(g);
 		g.drawImage(printImage, 0, 20, null);
-
+		
+		g.setColor(new Color(124/255f, 153/255f, 131/255f,0.3f));
+		g.fillRect(74, 166, 398, 38);
+		for(int i=0;i<7;i++){
+			g.fillRect(74,224+i*38,705, 19);
+		}
+		g.fillRect(74,492,705, 24);
+		g.setColor(Color.black);
+		
+		for(int i=0;i<14;i++){
+			g.drawLine(74,224+i*19,775, 224+i*19);
+		}
+		g.drawLine(110,224,110,492);
+		g.drawLine(208,224,208,492);
+		g.drawLine(389,224,389,492);
+		g.drawLine(467,224,467,492);
+		g.drawLine(516,224,516,492);
+		g.drawLine(590,224,590,492);
+		g.drawLine(692,224,692,492);
+		
 		g.setFont(veryLargeFont);
 		g.drawString(sp[13].str, sp[13].x + sp[13].getAlignX(g), sp[13].y);
 		g.setFont(largeFont);
@@ -223,49 +239,6 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 				g.drawString(sp[i].str, sp[i].x + sp[i].getAlignX(g), sp[i].y);
 			}
 		}
-	}
-
-	@Override
-	public int print(Graphics g, PageFormat pageFormat, int pageIndex) throws PrinterException {
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.scale(0.73, 0.73);
-		g2d.translate(7, -31);
-		if (outline) {
-			g.drawImage(printImage, 0, 20, null);
-			g.drawString("(공급받는자 보관용)", 320, 128);
-		}
-		g2d.setFont(veryLargePrintFont);
-		g2d.drawString(sp[13].str, (sp[13].x + sp[13].getAlignX(g)), (int) (sp[13].y));
-		g2d.setFont(largePrintFont);
-		g2d.drawString(sp[3].str, sp[3].x + sp[3].getAlignX(g), sp[3].y);
-		g2d.setFont(printfont);
-		for (int i = 0; i < sp.length; i++) {
-			if (sp[i] != null && sp[i].str != null && i != 3 && i != 13) {
-				g2d.drawString(sp[i].str, (int) ((sp[i].x + sp[i].getAlignX(g))), sp[i].y);
-			}
-		}
-		g2d.drawImage(stampImage, sp[5].x+45, sp[5].y-20, null);
-		g2d.translate(0, pageFormat.getImageableHeight() / 2 + 164);// pageFormat.getImageableY());
-		if (outline) {
-			g.drawImage(printImage, 0, 20, null);
-			g.drawString("(공급자 보관용)", 333, 128);
-			g2d.drawString(
-					"-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------",
-					0, 36);
-		}
-
-		g2d.setFont(veryLargePrintFont);
-		g2d.drawString(sp[13].str, (sp[13].x + sp[13].getAlignX(g)), (int) (sp[13].y));
-		g2d.setFont(largePrintFont);
-		g2d.drawString(sp[3].str, sp[3].x + sp[3].getAlignX(g), sp[3].y);
-		g2d.setFont(printfont);
-		for (int i = 0; i < sp.length; i++) {
-			if (sp[i] != null && sp[i].str != null && i != 3 && i != 13) {
-				g2d.drawString(sp[i].str, (int) ((sp[i].x + sp[i].getAlignX(g))), sp[i].y);
-			}
-		}
-		g2d.drawImage(stampImage, sp[5].x+45, sp[5].y-20, null);
-		return 0;
 	}
 
 	public Specification saveCurrData(DemandView demandView) {
@@ -308,5 +281,10 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 	public StringPlace[] getSp() {
 		// TODO Auto-generated method stub
 		return sp;
+	}
+
+	public boolean getOutLine() {
+		// TODO Auto-generated method stub
+		return outline;
 	}
 }

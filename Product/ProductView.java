@@ -70,7 +70,6 @@ public class ProductView implements View_Interface<ProductList> {
 	String funcStr[] = { "행 추가 (ctrl+shift+a)", "행 제거 (ctrl+shift+d)", "행 복사 (ctrl+shift+c)", "행 잘라내기 (ctrl+shift+x)",
 			"행 붙여넣기 (ctrl+shift+v)", "행 올리기 (ctrl+shift+up)", "행 내리기 (ctrl+shift+down)", "셀 복사 (ctrl+c)",
 			"셀 잘라내기 (ctrl+x)", "셀 붙여넣기 (ctrl+v)" };
-	DefClipboard clipboard;
 	String prevText;
 	ViewManager viewManager;
 	String today;
@@ -91,7 +90,6 @@ public class ProductView implements View_Interface<ProductList> {
 		prevProductList=new ProductList();
 
 		initListManager();
-		clipboard = new DefClipboard();
 		Object frontRow[][] = new Object[Main.FrontRow][8]; // 전면 테이블 행렬
 		Object backRow[][] = new Object[Main.BackRow][8]; // 후면 테이블 행렬
 		Object column[] = { "월일", "품목코드", "품목", "규격", "수량", "단가", "공급가액", "세액" };
@@ -337,13 +335,13 @@ public class ProductView implements View_Interface<ProductList> {
 	}
 
 	void clipboardCopy(JTable table) { // 복사
-		clipboard.copy((String) table.getValueAt(table.getSelectedRow(), table.getSelectedColumn()));
+		DefClipboard.copy((String) table.getValueAt(table.getSelectedRow(), table.getSelectedColumn()));
 	}
 
 	void clipboardPaste(JTable table) { // 붙여넣기
 		if (table.getSelectedColumn() != 0 && table.getSelectedColumn() != 6 && table.getSelectedColumn() != 7) {
 			try {
-				productList.setData(clipboard.pasteData(), table.getSelectedRow() + getIndex(), table.getSelectedColumn());
+				productList.setData(DefClipboard.pasteData(), table.getSelectedRow() + getIndex(), table.getSelectedColumn());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
