@@ -7,6 +7,8 @@ import FrameComponent.MainFrame;
 
 
 public class Main {
+	public static int frameWidth=838;
+	public static int frameHeight=910;
 	public static String virsion = "1.1";
 	public static String name = "거래명세서";
 	public final static Color YELLOW = Color.getHSBColor((float) 0.160, (float) 0.42, (float) 0.98);

@@ -18,7 +18,7 @@ public class MainFrame extends JFrame {
 	//private Image helpImage;
 	protected void frameInit() {
 		super.frameInit();
-		setBounds(200, 0, 838, 1045-184);
+		setBounds(200, 0, Main.frameWidth,Main.frameHeight);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		// setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
@@ -37,7 +37,7 @@ public class MainFrame extends JFrame {
 
 	public MainFrame(int x, int y) {
 		this();
-		setBounds(x, y, 838, 1045-184);
+		setBounds(x, y,Main.frameWidth,Main.frameHeight);
 	}
 
 	public MainFrame() {

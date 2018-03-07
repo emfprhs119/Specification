@@ -85,6 +85,10 @@ public class Product implements Model_Interface {
 */
 	public boolean equals(Object o) {
 		Product target = (Product) o;
+		
+		setNull();
+		target.setNull();
+		
 		if (!(date==null && target.date==null)){
 			if (date==null)
 				return false;
@@ -92,7 +96,6 @@ public class Product implements Model_Interface {
 				return false;
 			}
 		}
-		
 		if (!(code==null && target.code==null)){
 			if (code==null)
 				return false;
@@ -100,7 +103,6 @@ public class Product implements Model_Interface {
 				return false;
 			}
 		}
-		
 		if (!(name==null && target.name==null)){
 			if (name==null)
 				return false;
@@ -108,7 +110,6 @@ public class Product implements Model_Interface {
 				return false;
 			}
 		}
-		
 		if (!(standard==null && target.standard==null)){
 			if (standard==null)
 				return false;
@@ -118,11 +119,28 @@ public class Product implements Model_Interface {
 		}
 		if (count!=target.count || cost!=target.cost)
 			return false;
-			
+		
 		return true;
 	}
 	
 	
+	private void setNull() {
+		if (date!=null){
+			if (date.equals(""))
+				date=null;
+			else if (date.length()==4)
+				date="0"+date;
+		}
+		if (code!=null)
+			if (code.equals(""))
+				code=null;
+		if (name!=null)
+			if (name.equals(""))
+				name=null;
+		if (standard!=null)
+			if (standard.equals(""))
+				standard=null;
+	}
 	//getter setter
 
 	public void setProduct(Product product) {
@@ -131,6 +149,9 @@ public class Product implements Model_Interface {
 		this.standard = product.standard;
 		this.count = product.count;
 		this.cost = product.cost;
+	}
+	public void print(){
+		System.out.println(code+" "+name+" "+standard+" "+count+" "+cost);
 	}
 
 	public String getCost() {
@@ -223,11 +244,16 @@ public class Product implements Model_Interface {
 	public void setCost(String cost) {
 		if (cost != null)
 			this.cost = Long.parseLong(cost.replace(",", ""));
+		else{
+			this.cost=0;
+		}
 	}
 
 	public void setCount(String count) {
 		if (count != null)
 			this.count = Long.parseLong(count.replace(",", ""));
+		else
+			this.count=0;
 	}
 
 	public void setDate(String date) {

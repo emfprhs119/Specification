@@ -51,7 +51,7 @@ public class SpecFrameAction implements ActionListener {
 		case "¿Œº‚":
 			function.printOutPrinter();
 			break;
-		case "pdf":
+		case "PDF":
 			function.printOutPdf();
 			break;
 			

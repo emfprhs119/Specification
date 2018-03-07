@@ -59,23 +59,23 @@ public class ViewManager {
 		cardLayout.show(masterPanel, str);
 		contentPane.repaint();
 	}
-	public void saveAll() {
+	public boolean saveAll() {
 		Demand demand;
 		Specification specification;
 		if (!productView.getProductList().isHasData()){
 			JOptionPane.showMessageDialog(null, "데이터가 없습니다.");
-			return;
+			return false;
 		}
 		demand=demandView.getDemand();
 		if (demand.getName() == null || demand.getName().trim().equals("")){
 			JOptionPane.showMessageDialog(null, "상호가 비었습니다.");
-			return;
+			return false;
 		}
 		demand=demandView.saveCurrData();
 		specification=specificationView.saveCurrData(demandView);
 		productView.saveCurrData(specification.getIdQuery());
-		JOptionPane.showMessageDialog(null, "저장되었습니다.");
 		frameLabel.setSpec(specification);
+		return true;
 	}
 	public void modifyLoad() {
 		demandView.loadDataId(specificationView.getSpec().getName());
@@ -83,10 +83,10 @@ public class ViewManager {
 		productView.loadDataId(specificationView.getSpec().getId());
 		frameLabel.setSpec(specificationView.getSpec());
 	}
-	public void modifySave() {
+	public boolean modifySave() {
 		productView.getProductList().removeQuery(frameLabel.getSpec().getId());
 		productView.saveCurrData(frameLabel.getSpec().getId());
-		JOptionPane.showMessageDialog(null, "저장되었습니다.");
+		return true;
 	}
 	public boolean isModify() {
 		return productView.isModify();

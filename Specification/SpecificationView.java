@@ -80,7 +80,7 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 		button[1] = new JButton("´ÙÀ½ ¢º");
 		button[2] = new JButton("ÆíÁý");
 		button[3] = new JButton("ÀÎ¼â");
-		button[4] = new JButton("pdf");
+		button[4] = new JButton("PDF");
 		button[5] = new JButton("´Ý±â");
 		for (int i = 0; i < 6; i++) {
 			button[i].setBounds(bSize);
@@ -91,6 +91,7 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 			button[i].setToolTipText(button[i].getText());
 			add(button[i]);
 		}
+		/*
 		button[3].addActionListener(new ActionListener(){
 
 			@Override
@@ -108,6 +109,7 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 			}
 			
 		});
+		*/
 	};
 
 	private void initListManager() {

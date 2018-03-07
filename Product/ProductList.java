@@ -307,7 +307,7 @@ public class ProductList extends ArrayList<Product> implements List_Interface<Pr
 			return false;
 		else
 			for(int i=0;i<size();i++){
-				if (!get(i).equals(target.get(i))){
+				if (!((Product)target.get(i)).equals(get(i))){
 					return false;
 				}
 			}

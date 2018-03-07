@@ -491,26 +491,23 @@ public class ProductView implements View_Interface<ProductList> {
 			}
 
 			public void keyTyped(KeyEvent e) {
-				/*
 				Character c = e.getKeyChar();
 				// Çã¿ë ¹®ÀÚ
 				if (c.toString().matches("[^a-zA-Z0-9¤¡-¤¾¤¿-¤Ó°¡-ÆR`~!@#$%^&*()-_=+|{};:',.<>?]+..")) {
 					valueChangedUpdate(table);
 					return;
 				} else if (table.isSetCellEditable(table.getSelectedRow(), table.getSelectedColumn())) {
-					keyPressed(e);
 					if (!e.isControlDown()) {
 						String s = (String) table.getValueAt(table.getSelectedRow(), table.getSelectedColumn());
-						if (s == null || s == "\r\n")
+						if (s == null || s == "\r\n" ){
 							s = "";
-						table.setValueAt(s + e.getKeyChar(), table.getSelectedRow(), table.getSelectedColumn());
-						Main.modify = true;
+						}
+						if (c.toString().matches("[a-zA-Z0-9¤¡-¤¾¤¿-¤Ó°¡-ÆR`~!@#$%^&*()-_=+|{};:',.<>?]+"))
+								table.setValueAt(s + c, table.getSelectedRow(), table.getSelectedColumn());
 					}
 				}
-				*/
 				valueChangedUpdate(table);
 			}
-
 			@Override
 			public void keyReleased(KeyEvent e) {
 				valueChangedUpdate(table);
@@ -680,7 +677,8 @@ public class ProductView implements View_Interface<ProductList> {
 		productList.setSpecId(specId);
 		for (int i = 0; i < productList.size(); i++)
 			listManager.addItem(productList.get(i));
-			
+
+		prevProductList.loadList(specId);
 	}
 
 	public void removeList(String specId) {
@@ -696,10 +694,12 @@ public class ProductView implements View_Interface<ProductList> {
 	}
 
 	public boolean isModify() {
+		/*
 		if (currPage==1)
 			valueChangedUpdate(frontTable);
 		else
 			valueChangedUpdate(backTable);
+			*/
 		return !prevProductList.equals(productList);
 	}
 

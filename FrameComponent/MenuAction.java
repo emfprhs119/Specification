@@ -66,6 +66,10 @@ public class MenuAction extends MouseAdapter implements ActionListener {
 		case "인쇄하기":
 			function.printOutPrinter();
 			break;
+		case "PDF":
+		case "PDF내보내기":
+			function.printOutPdf();
+			break;
 		case "종료":
 			if (function.getViewManager().isModify()) {
 				int choice = JOptionPane.showConfirmDialog(null, "변경 내용을 저장하시겠습니까?", "종료", JOptionPane.YES_NO_CANCEL_OPTION,

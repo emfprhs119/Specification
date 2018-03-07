@@ -50,7 +50,7 @@ public class Print {
 		PrinterJob printerJob = PrinterJob.getPrinterJob();
 		Book book = new Book();
 		do{
-			book.append(new specificationPrintView(specificationView.getSp(),specificationView.getOutLine()), getMinimumMarginPageFormat(printerJob));
+			book.append(new specificationPrintView(specificationView.getSp(),true), getMinimumMarginPageFormat(printerJob));
 		}
 	 	while(specificationView.next());
 		printerJob.setPageable(book);
@@ -75,6 +75,9 @@ public class Print {
 	}
 
 	public void printToPdf(SpecificationView specificationView) {
+		File file;
+		file=new File("pdf");
+		file.mkdir();
 		PDDocument doc = printDocument(specificationView, Flag.PDF);
 		String fileName = specificationView.getDate() + "_" + specificationView.getDemand() + "_"
 				+ specificationView.getNo();
@@ -132,6 +135,12 @@ public class Print {
 
 			try {
 				cs = new PDPageContentStream(doc, bp);
+				cs.drawImage(outLinePDImageDemand, 0, 380, outLinePDImageDemand.getWidth() * 0.75f,
+						outLinePDImageDemand.getHeight() * 0.75f);
+				cs.drawImage(outLinePDImageDemand, 0, 380, outLinePDImageDemand.getWidth() * 0.75f,
+						outLinePDImageDemand.getHeight() * 0.75f);
+				cs.drawImage(outLinePDImageDemand, 0, 380, outLinePDImageDemand.getWidth() * 0.75f,
+						outLinePDImageDemand.getHeight() * 0.75f);
 				cs.drawImage(outLinePDImageDemand, 0, 380, outLinePDImageDemand.getWidth() * 0.75f,
 						outLinePDImageDemand.getHeight() * 0.75f);
 				cs.drawImage(stampPDImage, (sp[5].x + 45) * 0.75f, 718, stampPDImage.getWidth() * 0.75f,

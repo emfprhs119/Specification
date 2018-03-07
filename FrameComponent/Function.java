@@ -1,5 +1,7 @@
 package FrameComponent;
 
+import javax.swing.JOptionPane;
+
 import Output.Print;
 import Specification.SpecificationView;
 
@@ -17,19 +19,25 @@ public class Function {
 	}
 
 	public void save() {
-		if (frameLabel.getSpec() == null || !frameLabel.getSpec().getName().equals(viewManager.getDemandView().getDemand().getName())) {
-			viewManager.saveAll();
+		if (frameLabel.getSpec() == null
+				|| !frameLabel.getSpec().getName().equals(viewManager.getDemandView().getDemand().getName())) {
+			if (viewManager.saveAll())
+				JOptionPane.showMessageDialog(null, "저장되었습니다.");
+
 		} else {
-			viewManager.modifySave();
+			if (viewManager.modifySave())
+				JOptionPane.showMessageDialog(null, "저장되었습니다.");
 		}
 	}
 
 	public void load() {// 불러오기
 		viewManager.getSpecificationView().getListManager().setVisible(true);
 	}
-	public void modifySupply(){
+
+	public void modifySupply() {
 		viewManager.getSupplyView().modify();
 	}
+
 	// 이전 페이지
 	public void leftPage() {
 		if (viewManager.getProductView().getCurrPage() > 1) {
@@ -67,11 +75,9 @@ public class Function {
 			print.printToPrinter(specView);
 		}
 	}
+
 	public void printOutPdf() {
 		SpecificationView specView = viewManager.getSpecificationView();
-		if (viewManager.isModify()) {
-			save();
-		}
 		if (frameLabel.getSpec() != null) {
 			specView.loadData(frameLabel.getSpec());
 			print.printToPdf(specView);
@@ -79,7 +85,6 @@ public class Function {
 			print.printToPdf(specView);
 		}
 	}
-	
 
 	public void modify() {
 		viewManager.modifyLoad();
