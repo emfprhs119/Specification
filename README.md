@@ -4,7 +4,7 @@
 
 Screenshot
 ----------------
-![capture](/capture.png)
+![capture](/capture.PNG)
 ----------------
 폴더 구성
 -specification.jar
