@@ -4,15 +4,8 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
-import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -31,9 +24,16 @@ import Product.ProductList;
 import Supply.Supply;
 
 public class SpecificationView extends JFrame implements View_Interface<Specification> {
+	public enum PAGESET {
+		BASIC, FRONT, BACK
+	};
+
+	private PAGESET pageSet;
 	private Specification spec;
 	private Container contentPane;
-	private Image printImage;
+	private Image basicImage;
+	private Image frontImage;
+	private Image backImage;
 	private ListManager<Specification, SpecificationList> listManager;
 	private ProductList productList;
 	private Supply supply;
@@ -47,14 +47,14 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 	private Font font = new Font(null, Font.BOLD, 12);
 
 	private int page, maxPage;
-	private boolean outline;
-
 	public SpecificationView() {
 		super("미리보기");
 		setBounds(200, 300, 838, 650);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		try {
-			printImage = ImageIO.read(getClass().getClassLoader().getResource("resources/print.png"));
+			basicImage = ImageIO.read(getClass().getClassLoader().getResource("resources/print.png"));
+			frontImage = ImageIO.read(getClass().getClassLoader().getResource("resources/printFront.png"));
+			backImage = ImageIO.read(getClass().getClassLoader().getResource("resources/printBack.png"));
 			
 		} catch (IOException e1) {
 			JOptionPane.showConfirmDialog(null, "stamp.png 가 없습니다.", "에러", JOptionPane.CLOSED_OPTION,
@@ -69,7 +69,6 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 
 		productList = new ProductList();
 		supply = new Supply();
-		outline = false;
 		setVisible(false);
 	}
 
@@ -91,25 +90,6 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 			button[i].setToolTipText(button[i].getText());
 			add(button[i]);
 		}
-		/*
-		button[3].addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int choice = JOptionPane.showConfirmDialog(null, "외곽선을 출력하시겠습니까?", "외곽선", JOptionPane.YES_NO_OPTION,
-						JOptionPane.INFORMATION_MESSAGE);
-				switch (choice) {
-				case 0:
-					outline=true;
-					break;
-				case 1:
-					outline=false;
-					break;
-				}
-			}
-			
-		});
-		*/
 	};
 
 	private void initListManager() {
@@ -156,7 +136,7 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 
 		page = 1;
 		maxPage = productList.size() / Main.FrontRow;
-		// System.out.println(productList.size()+" "+Main.FrontRow);
+
 		sumPrice = productList.getSumPrice();
 		sumTax = productList.getSumTax();
 		placement();
@@ -169,7 +149,17 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 		int num;
 		int x, y;
 		num = 0;
-		sp = new StringPlace[14 + Main.FrontRow * 8];
+		
+		if (maxPage == 1)
+			pageSet = PAGESET.BASIC;
+		else {
+			if (page == 1)
+				pageSet = PAGESET.FRONT;
+			else
+				pageSet = PAGESET.BACK;
+		}
+		
+		sp = new StringPlace[14 + (Main.FrontRow+(pageSet == PAGESET.BACK?6:0)) * 8];
 		// DEMAND
 		sp[0] = new StringPlace(page + "  /  " + maxPage, 195, 82, ALIGN.CENTER);
 		sp[1] = new StringPlace(date, 130, 112, ALIGN.LEFT);
@@ -185,9 +175,9 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 		sp[10] = new StringPlace(supply.getFax(), 655, 196, ALIGN.LEFT);
 		// PRODUCT
 		x = 77;
-		y = 238;
+		y = 238-(pageSet == PAGESET.BACK?19*6:0);
 		num = 14;
-		for (int i = 0; i < Main.FrontRow; i++) {
+		for (int i = 0; i < Main.FrontRow+(pageSet == PAGESET.BACK?6:0); i++) {
 
 			product = productList.get((page - 1) * Main.FrontRow + i);
 			sp[num++] = new StringPlace(product.getDate(), x, y, ALIGN.LEFT);
@@ -205,43 +195,71 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 		sp[11] = new StringPlace(Main.longToMoneyString(sumPrice), x + 613, 507, ALIGN.RIGHT);
 		sp[12] = new StringPlace(Main.longToMoneyString(sumTax), x + 697, 507, ALIGN.RIGHT);
 		sp[13] = new StringPlace(Main.longToMoneyString(sumPrice + sumTax), 255, 193, ALIGN.LEFT);
+
 		repaint();
 	}
 
 	public void paint(Graphics g) {
 		super.paint(g);
-		g.drawImage(printImage, 0, 20, null);
-		
-		g.setColor(new Color(124/255f, 153/255f, 131/255f,0.3f));
-		g.fillRect(74, 166, 398, 38);
-		for(int i=0;i<7;i++){
-			g.fillRect(74,224+i*38,705, 19);
+		switch (pageSet) {
+		case BASIC:
+			g.drawImage(basicImage, 0, 20, null);
+			break;
+		case FRONT:
+			g.drawImage(frontImage,0, 20,null);
+			break;
+		case BACK:
+			g.drawImage(backImage, 0, 20, null);
+			break;
 		}
-		g.fillRect(74,492,705, 24);
+		drawSpecification(g,new Color(124 / 255f, 153 / 255f, 131 / 255f, 0.3f),sp,pageSet);
+	}
+	
+	void drawSpecification(Graphics g,Color c,StringPlace sp[], PAGESET pageSet) {
+		g.setColor(c);
+		switch (pageSet){
+		case BASIC:
+			g.fillRect(74, 492, 705, 24);
+			g.fillRect(74, 166, 398, 38);
+			break;
+		case FRONT:
+			g.fillRect(74, 166, 398, 38);
+			break;
+		case BACK:
+			g.fillRect(74, 492, 705, 24);
+			break;
+		}
+		for (int i = (pageSet==PAGESET.BACK?0:3); i < 10; i++) {
+			g.fillRect(74, 110 + i * 38, 705, 19);
+		}
+		g.setColor(new Color(c.getRed()/ 255f, c.getGreen()/ 255f,c.getBlue()/ 255f, 1f));
+		for (int i = (pageSet==PAGESET.BACK?1:6); i < 20; i++) {
+			g.drawLine(74, 110 + i * 19, 775, 110 + i * 19);
+		}
+		int LineX[]={110,208,389,467,516,590,692};
+		for(int x:LineX){
+			g.drawLine(x, (pageSet==PAGESET.BACK?94:224), x, 492);
+		}
 		g.setColor(Color.black);
-		
-		for(int i=0;i<14;i++){
-			g.drawLine(74,224+i*19,775, 224+i*19);
+		if (pageSet!=PAGESET.BACK){
+			g.setFont(veryLargeFont);
+			g.drawString(sp[13].str, sp[13].x + sp[13].getAlignX(g), sp[13].y);
+			g.setFont(largeFont);
+			g.drawString(sp[3].str, sp[3].x + sp[3].getAlignX(g), sp[3].y);
 		}
-		g.drawLine(110,224,110,492);
-		g.drawLine(208,224,208,492);
-		g.drawLine(389,224,389,492);
-		g.drawLine(467,224,467,492);
-		g.drawLine(516,224,516,492);
-		g.drawLine(590,224,590,492);
-		g.drawLine(692,224,692,492);
 		
-		g.setFont(veryLargeFont);
-		g.drawString(sp[13].str, sp[13].x + sp[13].getAlignX(g), sp[13].y);
-		g.setFont(largeFont);
-		g.drawString(sp[3].str, sp[3].x + sp[3].getAlignX(g), sp[3].y);
 		g.setFont(font);
 		for (int i = 0; i < sp.length; i++) {
+			if (pageSet==PAGESET.BACK && i>0 && i<11)
+				continue;
+			if (pageSet==PAGESET.FRONT && (i==11 || i==12))
+				continue;
 			if (sp[i] != null && sp[i].str != null && i != 3 && i != 13) {
 				g.drawString(sp[i].str, sp[i].x + sp[i].getAlignX(g), sp[i].y);
 			}
 		}
 	}
+	
 
 	public Specification saveCurrData(DemandView demandView) {
 		Specification spec = new Specification(demandView);
@@ -270,11 +288,11 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 	public String getDate() {
 		return date;
 	}
-	
+
 	public String getNo() {
 		return no;
 	}
-	
+
 	public String getDemand() {
 		// TODO Auto-generated method stub
 		return demand;
@@ -285,8 +303,8 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 		return sp;
 	}
 
-	public boolean getOutLine() {
-		// TODO Auto-generated method stub
-		return outline;
+	public PAGESET getPageSet() {
+		return pageSet;
 	}
+	
 }

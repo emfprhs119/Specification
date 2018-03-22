@@ -12,7 +12,7 @@ public class Function {
 	Print print;
 
 	public Function(ViewManager viewManager, FrameLabel frameLabel) {
-		print = new Print(viewManager);
+		print = new Print();
 		viewManager.getSpecificationView().setFunction(this);
 		this.viewManager = viewManager;
 		this.frameLabel = frameLabel;
