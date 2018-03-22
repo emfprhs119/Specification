@@ -48,8 +48,8 @@ public class FrameLabel {
 	}
 	private JLabel nameInit() {
 		JLabel title = new JLabel(Main.name);
-		title.setFont(new Font(Main.font, Font.BOLD, 60));
-		title.setBounds(230, 0, 500, 100);
+		title.setFont(new Font(Main.font, Font.BOLD, 35));
+		//title.setBounds(100,0, 500, 100);
 		return title;
 	}
 	
@@ -62,7 +62,7 @@ public class FrameLabel {
 	
 	private JLabel pageInit() {
 		JLabel page = new JLabel("page1/1");
-		page.setFont(new Font("µ¸¿ò", 0, 15));
+		page.setFont(new Font("µ¸¿ò", 0, 18));
 		page.setBounds(43, 30, 80, 30);
 		return page;
 	}

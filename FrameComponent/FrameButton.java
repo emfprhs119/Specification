@@ -10,7 +10,7 @@ public class FrameButton {
 	private JButton button[];
 	
 	public FrameButton(MenuAction action) {
-		Rectangle bSize=new Rectangle(60,740,132,45);
+		Rectangle bSize=new Rectangle(60,620,132,45);
 		button = new JButton[8];
 		button[0] = new JButton("◀ 이전");
 		button[1] = new JButton("다음 ▶");

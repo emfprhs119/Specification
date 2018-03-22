@@ -8,7 +8,7 @@ import FrameComponent.MainFrame;
 
 public class Main {
 	public static int frameWidth=838;
-	public static int frameHeight=910;
+	public static int frameHeight=790;
 	public static String virsion = "1.1";
 	public static String name = "거래명세서";
 	public final static Color YELLOW = Color.getHSBColor((float) 0.160, (float) 0.42, (float) 0.98);
@@ -16,7 +16,7 @@ public class Main {
 	public static int fontSize=17;			//default fontSize
 	public static int tableSize[]={45,70,205,105,50,75,95,80}; //default tableSize
 	public static int FrontRow=14; // 전면 리스트 행수
-	public static int BackRow = 25; // 후면 리스트 행수
+	public static int BackRow = 20; // 후면 리스트 행수
 	public static DataReader dataReader;
 	public static SimpleDateFormat fullDateFormat;
 	public static SimpleDateFormat dateFormat;

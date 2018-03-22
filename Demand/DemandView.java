@@ -1,12 +1,9 @@
 package Demand;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Properties;
@@ -25,30 +22,6 @@ import Inheritance.ColumnManager;
 import Inheritance.ListManager;
 import Inheritance.View_Interface;
 import Main.Main;
-/*
-class UtilCalendarModel extends AbstractDateModel<java.util.Calendar> {
-	
-	public UtilCalendarModel() {
-		this(null);
-	}
-	
-	public UtilCalendarModel(Calendar value) {
-		super();
-		setValue(value);
-	}
-
-	@Override
-	protected Calendar fromCalendar(Calendar from) {
-		return (Calendar)from.clone();
-	}
-
-	@Override
-	protected Calendar toCalendar(Calendar from) {
-		return (Calendar)from.clone();
-	}
-	
-}
-*/
 //거래처 view
 public class DemandView extends WhitePanel implements View_Interface<Demand> {
 	WhitePanel leftPanel, rightPanel;
@@ -68,71 +41,58 @@ public class DemandView extends WhitePanel implements View_Interface<Demand> {
 		p.put("text.year", "Year");
 		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
 		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateFormatter());
-		setBounds(0, 94, 350, 320);
+		setBounds(11, 65, 330, 130);
 		initListManager();
 		leftPanel = new WhitePanel();
 		rightPanel = new WhitePanel();
-		leftPanel.setBounds(45, 4, 350, 150);
-		rightPanel.setBounds(15, 0, 115, 150);
+		leftPanel.setBounds(10, 0, 110, 63);
+		rightPanel.setBounds(120, 0, 203, 63);
 
-		rightTextPanel = new JPanel[5];
-		leftLabelPanel = new JPanel[5];
-		rightTextField = new JTextField[6];
-		for (int i = 0; i < 5; i++) {
+		rightTextPanel = new JPanel[2];
+		leftLabelPanel = new JPanel[2];
+		rightTextField = new JTextField[2];
+		for (int i = 0; i <2; i++) {
 			rightTextPanel[i] = new JPanel();
 			leftLabelPanel[i] = new JPanel();
 		}
-		JLabel leftLabel[] = new JLabel[6];
-		leftLabelPanel[0].add(leftLabel[0] = new JLabel("발행일자:"));
-		leftLabelPanel[1].add(leftLabel[1] = new JLabel("등록번호:"));
-		leftLabelPanel[2].add(leftLabel[2] = new JLabel("상      호:"));
-		leftLabelPanel[3].add(leftLabel[3] = new JLabel("전화번호:"));
-		leftLabelPanel[4].add(leftLabel[4] = new JLabel("담 당 자 :"));
-
+		JLabel leftLabel[] = new JLabel[2];
+		leftLabelPanel[0].add(leftLabel[0] = new JLabel("발행일자"));
+		leftLabelPanel[1].add(leftLabel[1] = new JLabel("거래처명"));
+		rightPanel.add(datePicker);
 		rightTextPanel[0].add(datePicker);
 		rightTextPanel[1].add(rightTextField[1] = new JTextField(14));
-		rightTextPanel[2].add(rightTextField[2] = new JTextField(14));
-		rightTextPanel[3].add(rightTextField[3] = new JTextField(14));
-		rightTextPanel[4].add(rightTextField[4] = new JTextField(14));
+
+		rightTextPanel[0].setBounds(0,0,203, 34);
+
+		rightTextPanel[1].setLayout(null);
+		rightTextPanel[1].setBounds(1, 38, 210, 25);
+		
+		rightTextField[1].setBounds(0, 1, 174, 25);
+		rightTextField[1].setFont(new Font(Main.font, Font.BOLD, 15));
+		rightTextField[1].setHorizontalAlignment(JTextField.LEFT);
 		
 		demandLoadButton = new JButton("...");
-		demandLoadButton.setBounds(181,1,28,25);
-		demandLoadButton.setPreferredSize(new Dimension(28, 25));
-		
+		rightTextPanel[1].add(demandLoadButton);
+		demandLoadButton.setBounds(174,0,28,25);
 		
 		demandLoadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				listManager.setVisible(true);
 			}
 		});
-		rightTextPanel[1].add(demandLoadButton);
 		model.setSelected(true);
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 2; i++) {
 			
-			rightTextPanel[i].setBounds(80, i*30+5, 210, 32);
 			leftLabelPanel[i].setBounds(10, i * 30, 105, 35);
-			rightTextPanel[i].setBackground(Color.WHITE);
 			leftLabelPanel[i].setBackground(Color.WHITE);
 			leftLabel[i].setFont(new Font(Main.font, Font.BOLD, 22));
 			leftLabel[i].setHorizontalAlignment(JLabel.RIGHT);
-			if (i != 0) {
-				rightTextPanel[i].setLayout(null);
-				rightTextField[i].setBounds(7, 1, 174, 25);
-				rightTextField[i].setFont(new Font(Main.font, Font.BOLD, 15));
-				rightTextField[i].setHorizontalAlignment(JTextField.LEFT);
-				rightTextField[i].addKeyListener(new DemandListener(i,rightTextField));
-			}
-			rightPanel.add(leftLabelPanel[i]);
-			leftPanel.add(rightTextPanel[4 - i]);
+			rightTextPanel[i].setBackground(Color.WHITE);
+			leftPanel.add(leftLabelPanel[i]);
+			rightPanel.add(rightTextPanel[i]);
 		}
-		
-		//위치 조정
-		rightTextPanel[0].setBounds(15, 0, 346, 200);
-		leftLabelPanel[1].setBounds(10 - 1, 1 * 30, 105, 35);
-		leftLabelPanel[2].setBounds(10 - 3, 2 * 30, 105, 35);
-
-		this.add(rightPanel);
 		this.add(leftPanel);
+		this.add(rightPanel);
 	}
 
 	private void initListManager() {
@@ -145,13 +105,10 @@ public class DemandView extends WhitePanel implements View_Interface<Demand> {
 	}
 
 	public void setDemand(Demand demand) {
-		rightTextField[1].setText(demand.getRegNum());
-		rightTextField[2].setText(demand.getName());
-		rightTextField[3].setText(demand.getTel());
-		rightTextField[4].setText(demand.getWho());
+		rightTextField[1].setText(demand.getName());
 	}
 	public String getDate(){
-		return Main.fullDateFormat.format(model.getValue());//datePicker.get;
+		return Main.fullDateFormat.format(model.getValue());
 	}
 	public void setDate(String date){
 			String[] token = date.split("\\.");
@@ -160,10 +117,7 @@ public class DemandView extends WhitePanel implements View_Interface<Demand> {
 	}
 	public Demand getDemand() {
 		Demand demand = new Demand();
-		demand.setRegNum(rightTextField[1].getText());
-		demand.setName(rightTextField[2].getText());
-		demand.setTel(rightTextField[3].getText());
-		demand.setWho(rightTextField[4].getText());
+		demand.setName(rightTextField[1].getText());
 		return demand;
 	}
 
@@ -206,18 +160,4 @@ class DateFormatter extends AbstractFormatter {
 		}
 		return "";
 	}
-}
-class DemandListener extends KeyAdapter{
-	JTextField textField[];
-	int key;
-	DemandListener(int key,JTextField textField[]){
-		this.key=key;
-		this.textField=textField;
-	}
-		public void keyPressed(KeyEvent keyEvent) {
-			if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
-				if (key != 4)
-					textField[key + 1].requestFocus();
-			} 
-		}
 }

@@ -16,10 +16,10 @@ public class SupplyView extends WhitePanel{
 	Supply supply;
 	SupplyModify supplyModify;
 	public SupplyView(ViewManager viewManager) {
-		defaultFont=new Font(Main.font,Font.BOLD, 15);
+		defaultFont=new Font(Main.font,Font.BOLD, 13);
 		pane=this;
 		sup = new JLabel[8];
-		setBounds(358, 90, 380, 200);
+		setBounds(358, 30, 380, 140);
 		supply=new Supply();
 		supplyModify=new SupplyModify(this);
 		init();
@@ -27,32 +27,32 @@ public class SupplyView extends WhitePanel{
 	}
 	public void init(){
 		JLabel 공급자 = new JLabel(new String("<html>공<br>급<br>자</html>"));
-		공급자.setFont(defaultFont.deriveFont(25.f));
-		공급자.setBounds(14, -45, 200, 300);
+		공급자.setFont(defaultFont.deriveFont(22.f));
+		공급자.setBounds(16, 0, 200, 137);
 		JLabel 등록번호 = new JLabel(new String("<html>등록<br>번호</html>"));
-		등록번호.setFont(defaultFont);
-		등록번호.setBounds(48, -119, 200, 300);
+		등록번호.setFont(defaultFont.deriveFont(10.5f));
+		등록번호.setBounds(50, 0, 40, 27);
 		JLabel 상호 = new JLabel(new String("상호"));
 		상호.setFont(defaultFont);
-		상호.setBounds(48, -77, 200, 300);
+		상호.setBounds(49, 35, 200, 13);
 		JLabel 성명 = new JLabel(new String("성명"));
 		성명.setFont(defaultFont);
-		성명.setBounds(212, -77, 200, 300);
+		성명.setBounds(213, 35, 200, 13);
 		JLabel 주소 = new JLabel(new String("주소"));
 		주소.setFont(defaultFont);
-		주소.setBounds(48, -40, 200, 300);
+		주소.setBounds(49, 62, 200, 13);
 		JLabel 업태 = new JLabel(new String("업태"));
 		업태.setFont(defaultFont);
-		업태.setBounds(48, -5, 200, 300);
+		업태.setBounds(49, 89, 200, 13);
 		JLabel 종목 = new JLabel(new String("종목"));
 		종목.setFont(defaultFont);
-		종목.setBounds(212, -5, 200, 300);
+		종목.setBounds(213, 89, 200, 13);
 		JLabel 전화 = new JLabel(new String("전화"));
 		전화.setFont(defaultFont);
-		전화.setBounds(48, 31, 200, 300);
+		전화.setBounds(49, 115, 200, 13);
 		JLabel 팩스 = new JLabel(new String("팩스"));
 		팩스.setFont(defaultFont);
-		팩스.setBounds(212, 31, 200, 300);
+		팩스.setBounds(213, 115, 200, 13);
 		pane.add(공급자);
 		pane.add(등록번호);
 		pane.add(상호);
@@ -67,16 +67,16 @@ public class SupplyView extends WhitePanel{
 			sup[i].setFont(defaultFont);
 			pane.add(sup[i]);
 		}
-		sup[0].setFont(defaultFont.deriveFont(28.f));
+		sup[0].setFont(defaultFont.deriveFont(22.f));
 		sup[0].setHorizontalAlignment(JTextField.CENTER);
-		sup[0].setBounds(90, -67, 270, 200);
-		sup[1].setBounds(90, -27, 500, 200);
-		sup[2].setBounds(253, -27, 500, 200);
-		sup[3].setBounds(90, 10, 500, 200);
-		sup[4].setBounds(90, 45, 500, 200);
-		sup[5].setBounds(253, 45, 500, 200);
-		sup[6].setBounds(90, 81, 500, 200);
-		sup[7].setBounds(253, 81, 500, 200);
+		sup[0].setBounds(90, 8, 250, 16);
+		sup[1].setBounds(90, 35, 500, 13);
+		sup[2].setBounds(253, 35, 500, 13);
+		sup[3].setBounds(90, 62, 500, 13);
+		sup[4].setBounds(90, 89, 500, 13);
+		sup[5].setBounds(253, 89, 500, 13);
+		sup[6].setBounds(90, 115, 500, 13);
+		sup[7].setBounds(253, 115, 500, 13);
 	}
 	
 	void loadSupply() {
@@ -90,19 +90,23 @@ public class SupplyView extends WhitePanel{
 		}
 	public void paint(Graphics g) {
 		super.paint(g);
+		int sizeY=137;
 		g.setColor(Color.black);
-		g.drawRect(12, 9, 365, 187);
-		g.drawRect(42, 9, 42, 43);
-		for (int i = 0; i < 4; i++) {
-			g.drawRect(42, 52 + 36 * i, 42, 36);
+		g.drawRect(12, 0, 365, sizeY-2);
+		//g.drawRect(42, 0, 42, sizeY/5);
+		for (int i = 0; i < 5; i++) {
+			g.drawRect(42, sizeY/5 * i, 42, sizeY/5);
 		}
-		for (int i = 0; i < 4; i++) {
-			if (i != 1)
-				g.drawRect(205, 52 + 36 * i, 42, 36);
+		
+		for (int i = 0; i < 5; i++) {
+			if (i != 2 && i!=0)
+				g.drawRect(205, sizeY/5 * i, 42, sizeY/5);
 		}
-		for (int i = 0; i < 4; i++) {
-			g.drawRect(84, 52 + 36 * i, 365 - 72, 36);
+		
+		for (int i = 0; i < 5; i++) {
+			g.drawRect(84, sizeY/5 * (i), 293, sizeY/5);
 		}
+		
 		
 	}
 	public void setSupply(Supply supply) {

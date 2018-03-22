@@ -116,8 +116,8 @@ public class ProductView implements View_Interface<ProductList> {
 		frontTablePanel = new WhitePanel();
 		backTablePanel = new WhitePanel();
 
-		frontTablePanel.setBounds(18, 290, 720, 635);
-		backTablePanel.setBounds(18, 37, 720, 840);
+		frontTablePanel.setBounds(18, 170, 720, 635);
+		backTablePanel.setBounds(18, 32, 720, 780);
 		// 테이블 생성
 		frontTable = new MyJTable((Object[][]) frontRow, column);
 		backTable = new MyJTable((Object[][]) backRow, column);
@@ -131,7 +131,7 @@ public class ProductView implements View_Interface<ProductList> {
 		JScrollPane backScroll = new JScrollPane(backTable);
 		backScroll.setBackground(Color.WHITE);
 		frontScroll.setBounds(0, 0, 720, 354);
-		backScroll.setBounds(0, 0, 720, 607);
+		backScroll.setBounds(0, 0, 720, 492);
 		// 테이블 초기화
 		tableInit(frontTable);
 		tableInit(backTable);
@@ -212,31 +212,31 @@ public class ProductView implements View_Interface<ProductList> {
 		getSumLabelField().setEditable(false);
 		getSumBlankField().setEditable(false);
 
-		getSumTextLabel().setBounds(15, 260, 400, 25);
+		getSumTextLabel().setBounds(23, 140, 400, 25);
 		getSumTextLabel().setFont(new Font(Main.font, Font.BOLD, 25));
 		getSumText().setFont(new Font(Main.font, Font.BOLD, 25));
 		getSumText().setHorizontalAlignment(JTextField.RIGHT);
 		getSumText().setBackground(Main.YELLOW);
-		getSumText().setBounds(132, 257, 220, 30);
+		getSumText().setBounds(132, 137, 220, 30);
 
 		getSumBlankField().setBackground(Color.white);
-		getSumBlankField().setBounds(50, 861 - 184, 719, 35);
+		getSumBlankField().setBounds(50,557, 719, 35);
 
 		getSumLabelField().setText("합계");
 		getSumLabelField().setFont(new Font(Main.font, Font.BOLD, Main.fontSize / 2 * 3));
 		getSumLabelField().setHorizontalAlignment(JTextField.CENTER);
 		getSumLabelField().setBackground(Color.white);
-		getSumLabelField().setBounds(50, 861 - 184, 301, 35);
+		getSumLabelField().setBounds(50, 557, 301, 35);
 
 		getSumTextBottom().setFont(new Font(Main.font, Font.BOLD, Main.fontSize));
 		getSumTextBottom().setHorizontalAlignment(JTextField.RIGHT);
 		getSumTextBottom().setBackground(Main.YELLOW);
-		getSumTextBottom().setBounds(639, 861 - 184, 87, 35);
+		getSumTextBottom().setBounds(639, 557, 87, 35);
 
 		getSumTaxBottom().setFont(new Font(Main.font, Font.BOLD, Main.fontSize));
 		getSumTaxBottom().setHorizontalAlignment(JTextField.RIGHT);
 		getSumTaxBottom().setBackground(Color.white);
-		getSumTaxBottom().setBounds(639, 861 - 184, 87, 35);
+		getSumTaxBottom().setBounds(639,557, 87, 35);
 	}
 
 	void tableUpdate(JTable table) {
@@ -329,9 +329,9 @@ public class ProductView implements View_Interface<ProductList> {
 				: 0;
 		getSumText().setText(Main.longToMoneyString(calcData + calcData / 10) + "원");
 		getSumTextBottom().setText(Main.longToMoneyString(calcData));
-		getSumTextBottom().setBounds(594 - len, 861 - 184, 95 + len, 35);
+		getSumTextBottom().setBounds(594 - len, 557, 95 + len, 35);
 		getSumTaxBottom().setText(Main.longToMoneyString(calcData / 10));
-		getSumTaxBottom().setBounds(594 + 95, 861 - 184, 80, 35);
+		getSumTaxBottom().setBounds(594 + 95, 557, 80, 35);
 	}
 
 	void clipboardCopy(JTable table) { // 복사
