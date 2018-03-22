@@ -15,7 +15,7 @@ public class FrameMenuBar {
 		menus[1] = new Menu("도움말");
 		//---------------------------------------
 		menuItems = new MenuItem[7];
-		menuItems[0] = new MenuItem("새 견적서"); 
+		menuItems[0] = new MenuItem("새 명세서"); 
 		menuItems[1] = new MenuItem("불러오기");
 		menuItems[2] = new MenuItem("저장하기");
 		menuItems[3] = new MenuItem("공급자 수정");

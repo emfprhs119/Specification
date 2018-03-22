@@ -11,15 +11,16 @@ public class FrameButton {
 	
 	public FrameButton(MenuAction action) {
 		Rectangle bSize=new Rectangle(60,620,132,45);
-		button = new JButton[8];
+		button = new JButton[9];
 		button[0] = new JButton("◀ 이전");
 		button[1] = new JButton("다음 ▶");
 		button[2] = new JButton("새 명세서");
 		button[3] = new JButton("불러오기");
 		button[4] = new JButton("저장하기");
-		button[5] = new JButton("인쇄하기");
-		button[6] = new JButton("PDF");
-		button[7] = new JButton("종료");
+		button[5] = new JButton("미리보기");
+		button[6] = new JButton("인쇄하기");
+		button[7] = new JButton("PDF");
+		button[8] = new JButton("종료");
 		/*
 		button[6] = getQuestionIcon(30,30);
 
@@ -28,7 +29,7 @@ public class FrameButton {
 		button[6].setVisible(true);
 		button[6].addActionListener(action);
 		*/
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 9; i++) {
 			button[i].setBounds(bSize);
 			bSize.x+=bSize.width+10;
 			button[i].setFont(new Font(Main.font, Font.BOLD, 22));
@@ -40,8 +41,8 @@ public class FrameButton {
 				bSize.x-=(bSize.width+10)*5;
 
 			}
-			if (i==6)
-				bSize.x+=(bSize.width+10)*2;
+			if (i==7)
+				bSize.x+=(bSize.width+10);
 		}
 	}
 	public JButton[] getButtons() {

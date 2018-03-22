@@ -63,6 +63,9 @@ public class MenuAction extends MouseAdapter implements ActionListener {
 		case "다음 ▶":
 			function.rightPage();
 			break;
+		case "미리보기":
+			function.preview();
+			break;
 		case "인쇄하기":
 			function.printOutPrinter();
 			break;

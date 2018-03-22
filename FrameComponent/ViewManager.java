@@ -75,6 +75,7 @@ public class ViewManager {
 		specification=specificationView.saveCurrData(demandView);
 		productView.saveCurrData(specification.getIdQuery());
 		frameLabel.setSpec(specification);
+		modifyLoad();
 		return true;
 	}
 	public void modifyLoad() {
@@ -86,6 +87,7 @@ public class ViewManager {
 	public boolean modifySave() {
 		productView.getProductList().removeQuery(frameLabel.getSpec().getId());
 		productView.saveCurrData(frameLabel.getSpec().getId());
+		modifyLoad();
 		return true;
 	}
 	public boolean isModify() {

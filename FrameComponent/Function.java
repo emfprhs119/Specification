@@ -61,7 +61,16 @@ public class Function {
 		}
 		refresh();
 	}
-
+	// 미리보기
+	public void preview(){
+		SpecificationView specView = viewManager.getSpecificationView();
+		if (viewManager.isModify()) {
+			save();
+		}
+		if (frameLabel.getSpec() != null) {
+			specView.loadData(frameLabel.getSpec());
+		}
+	}
 	// 출력
 	public void printOutPrinter() {
 		SpecificationView specView = viewManager.getSpecificationView();

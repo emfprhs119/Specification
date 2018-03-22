@@ -694,12 +694,6 @@ public class ProductView implements View_Interface<ProductList> {
 	}
 
 	public boolean isModify() {
-		/*
-		if (currPage==1)
-			valueChangedUpdate(frontTable);
-		else
-			valueChangedUpdate(backTable);
-			*/
 		return !prevProductList.equals(productList);
 	}
 
