@@ -72,12 +72,12 @@ public class Function {
 		}
 	}
 	// Ãâ·Â
-	public void printOutPrinter() {
+	public void printOutPrinter(int flag) {
 		SpecificationView specView = viewManager.getSpecificationView();
 		if (viewManager.isModify()) {
 			save();
 		}
-		if (frameLabel.getSpec() != null) {
+		if (frameLabel.getSpec() != null && flag==0) {
 			specView.loadData(frameLabel.getSpec());
 			print.printToPrinter(specView);
 		} else if (specView.isVisible()) {
@@ -85,9 +85,12 @@ public class Function {
 		}
 	}
 
-	public void printOutPdf() {
+	public void printOutPdf(int flag) {
 		SpecificationView specView = viewManager.getSpecificationView();
-		if (frameLabel.getSpec() != null) {
+		if (viewManager.isModify()) {
+			save();
+		}
+		if (frameLabel.getSpec() != null && flag==0) {
 			specView.loadData(frameLabel.getSpec());
 			print.printToPdf(specView);
 		} else if (specView.isVisible()) {

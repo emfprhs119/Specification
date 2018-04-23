@@ -205,6 +205,8 @@ public class Product implements Model_Interface {
 			return "";
 		if (date.length()==4)
 			date="0"+date;
+		if (date.length()==3)
+			date="0"+date+"0";
 		return date;
 	}
 

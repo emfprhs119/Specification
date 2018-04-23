@@ -49,10 +49,10 @@ public class SpecFrameAction implements ActionListener {
 			spec.setVisible(false);
 			break;
 		case "¿Œº‚":
-			function.printOutPrinter();
+			function.printOutPrinter(1);
 			break;
 		case "PDF":
-			function.printOutPdf();
+			function.printOutPdf(1);
 			break;
 			
 		case "¥›±‚":

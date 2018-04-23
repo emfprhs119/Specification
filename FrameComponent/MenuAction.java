@@ -67,11 +67,11 @@ public class MenuAction extends MouseAdapter implements ActionListener {
 			function.preview();
 			break;
 		case "인쇄하기":
-			function.printOutPrinter();
+			function.printOutPrinter(0);
 			break;
 		case "PDF":
 		case "PDF내보내기":
-			function.printOutPdf();
+			function.printOutPdf(0);
 			break;
 		case "종료":
 			if (function.getViewManager().isModify()) {
