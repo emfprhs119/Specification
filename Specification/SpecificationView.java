@@ -45,7 +45,7 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 	private Font veryLargeFont = new Font(null, Font.BOLD, 23);
 	private Font largeFont = new Font(null, Font.BOLD, 19);
 	private Font font = new Font(null, Font.BOLD, 12);
-
+	private Function function;
 	private int page, maxPage;
 	public SpecificationView() {
 		super("¹Ì¸®º¸±â");
@@ -66,24 +66,24 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 		contentPane = this.getContentPane();
 		contentPane.setLayout(null);
 		contentPane.setBackground(Color.WHITE);
-
+		
 		productList = new ProductList();
 		supply = new Supply();
 		setVisible(false);
 	}
 
 	private void buttonInit(SpecFrameAction specAction) {
-		Rectangle bSize = new Rectangle(45, 550, 120, 45);
+		Rectangle bSize = new Rectangle(99, 550, 120, 45);
 		JButton button[] = new JButton[6];
 		button[0] = new JButton("¢¸ ÀÌÀü");
 		button[1] = new JButton("´ÙÀ½ ¢º");
-		button[2] = new JButton("ÆíÁý");
-		button[3] = new JButton("ÀÎ¼â");
-		button[4] = new JButton("PDF");
-		button[5] = new JButton("´Ý±â");
-		for (int i = 0; i < 6; i++) {
+		//button[2] = new JButton("ÆíÁý");
+		button[2] = new JButton("ÀÎ¼â");
+		button[3] = new JButton("PDF");
+		button[4] = new JButton("´Ý±â");
+		for (int i = 0; i < 5; i++) {
 			button[i].setBounds(bSize);
-			bSize.x += bSize.width + 3;
+			bSize.x += bSize.width + 10;
 			button[i].setFont(new Font(Main.font, Font.BOLD, 22));
 			button[i].setVisible(true);
 			button[i].addActionListener(specAction);
@@ -140,8 +140,7 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 		sumPrice = productList.getSumPrice();
 		sumTax = productList.getSumTax();
 		placement();
-
-		this.setVisible(true);
+		function.modify();
 	}
 
 	private void placement() {
@@ -268,6 +267,7 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 	}
 
 	public void setFunction(Function function) {
+		this.function=function;
 		buttonInit(new SpecFrameAction(this, function));
 	}
 

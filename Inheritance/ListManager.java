@@ -47,6 +47,8 @@ public class ListManager<T extends Model_Interface,LIST extends List_Interface<T
 		setResizable(false);
 		buttonInit();
 		tableInit();
+		
+		
 		searchField.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -100,6 +102,7 @@ public class ListManager<T extends Model_Interface,LIST extends List_Interface<T
 				tableUpdate();
 			}
 		});
+		
 		button[2] = new Button("불러오기");
 		button[2].setBounds(265, 495, 80, 40);
 		button[2].addActionListener(new ActionListener() {

@@ -51,13 +51,13 @@ public class SpecificationList extends ArrayList<Specification> implements List_
 	public boolean removeQuery(int i) {
 		StringBuilder sb=new StringBuilder();
 		sb.append("DELETE FROM SPEC_ITEM WHERE SPEC_ID='");
-		sb.append(get(i).getId());
+		sb.append(get(i).getIdQuery());
 		sb.append("';");
 		boolean flag = Main.dataReader.execute(sb.toString());
 		if (flag){
 			sb=new StringBuilder();
 			sb.append("DELETE FROM SPEC WHERE SPEC_ID='");
-			sb.append(get(i).getId());
+			sb.append(get(i).getIdQuery());
 			sb.append("';");
 			flag=Main.dataReader.execute(sb.toString());
 		}

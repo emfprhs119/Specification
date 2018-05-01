@@ -1,6 +1,6 @@
 명세서 프로그램
 ============
-[version 1.0 build](https://github.com/emfprhs119/Specification/releases)
+[version 1.1 build](https://github.com/emfprhs119/Specification/releases)
 
 Screenshot
 ----------------

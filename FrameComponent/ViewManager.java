@@ -62,10 +62,6 @@ public class ViewManager {
 	public boolean saveAll() {
 		Demand demand;
 		Specification specification;
-		if (!productView.getProductList().isHasData()){
-			JOptionPane.showMessageDialog(null, "데이터가 없습니다.");
-			return false;
-		}
 		demand=demandView.getDemand();
 		if (demand.getName() == null || demand.getName().trim().equals("")){
 			JOptionPane.showMessageDialog(null, "상호가 비었습니다.");
@@ -80,12 +76,12 @@ public class ViewManager {
 	public void modifyLoad() {
 		demandView.loadDataId(specificationView.getSpec().getName());
 		demandView.setDate(specificationView.getSpec().getDate());
-		productView.loadDataId(specificationView.getSpec().getId());
+		productView.loadDataId(specificationView.getSpec().getIdQuery());
 		frameLabel.setSpec(specificationView.getSpec());
 	}
 	public boolean modifySave() {
-		productView.getProductList().removeQuery(frameLabel.getSpec().getId());
-		productView.saveCurrData(frameLabel.getSpec().getId());
+		productView.getProductList().removeQuery(frameLabel.getSpec().getIdQuery());
+		productView.saveCurrData(frameLabel.getSpec().getIdQuery());
 		return true;
 	}
 	public boolean isModify() {

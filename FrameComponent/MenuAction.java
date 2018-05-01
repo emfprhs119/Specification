@@ -37,9 +37,11 @@ public class MenuAction extends MouseAdapter implements ActionListener {
 					function.save();
 					new MainFrame(frame.getX(),frame.getY());
 					frame.setVisible(false);
+					function.closeWindows();
 				case 1:
 					new MainFrame(frame.getX(),frame.getY());
 					frame.setVisible(false);
+					function.closeWindows();
 				case 2:
 				}
 			}
@@ -47,6 +49,7 @@ public class MenuAction extends MouseAdapter implements ActionListener {
 			{
 				new MainFrame(frame.getX(),frame.getY());
 				frame.setVisible(false);
+				function.closeWindows();
 			}
 			break;
 		case "불러오기":

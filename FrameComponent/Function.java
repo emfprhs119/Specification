@@ -19,6 +19,10 @@ public class Function {
 	}
 
 	public void save() {
+		if (!viewManager.getProductView().getProductList().isHasData()){
+			JOptionPane.showMessageDialog(null, "데이터가 없습니다.");
+			return;
+		}
 		if (frameLabel.getSpec() == null
 				|| !frameLabel.getSpec().getName().equals(viewManager.getDemandView().getDemand().getName())) {
 			if (viewManager.saveAll())
@@ -32,6 +36,7 @@ public class Function {
 
 	public void load() {// 불러오기
 		viewManager.getSpecificationView().getListManager().setVisible(true);
+		
 	}
 
 	public void modifySupply() {
@@ -63,16 +68,27 @@ public class Function {
 	}
 	// 미리보기
 	public void preview(){
+		if (!viewManager.getProductView().getProductList().isHasData()){
+			JOptionPane.showMessageDialog(null, "데이터가 없습니다.");
+			return;
+		}
 		SpecificationView specView = viewManager.getSpecificationView();
 		if (viewManager.isModify()) {
 			save();
 		}
 		if (frameLabel.getSpec() != null) {
 			specView.loadData(frameLabel.getSpec());
+			specView.setVisible(true);
 		}
 	}
 	// 출력
 	public void printOutPrinter(int flag) {
+		
+		if (!viewManager.getProductView().getProductList().isHasData()){
+			JOptionPane.showMessageDialog(null, "데이터가 없습니다.");
+			return;
+		}
+		
 		SpecificationView specView = viewManager.getSpecificationView();
 		if (viewManager.isModify()) {
 			save();
@@ -86,6 +102,10 @@ public class Function {
 	}
 
 	public void printOutPdf(int flag) {
+		if (!viewManager.getProductView().getProductList().isHasData()){
+			JOptionPane.showMessageDialog(null, "데이터가 없습니다.");
+			return;
+		}
 		SpecificationView specView = viewManager.getSpecificationView();
 		if (viewManager.isModify()) {
 			save();
@@ -112,5 +132,9 @@ public class Function {
 	public ViewManager getViewManager() {
 		// TODO Auto-generated method stub
 		return viewManager;
+	}
+
+	public void closeWindows() {
+		viewManager.getSpecificationView().getListManager().setVisible(false);
 	}
 }

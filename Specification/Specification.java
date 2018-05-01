@@ -63,10 +63,11 @@ public class Specification implements Model_Interface {
 		this.no=no;
 		
 	}
+	/*
 	public String getId() {
 		return spec_id;
 	}
-	
+	*/
 	public String getIdQuery() {
 		StringBuilder sb=new StringBuilder();
 		sb.append("SELECT SPEC_ID FROM SPEC WHERE DEM_NAME LIKE '");
@@ -78,8 +79,9 @@ public class Specification implements Model_Interface {
 		sb.append("';");
 		return Main.dataReader.getDataQuery(sb.toString());
 	}
+	/*
 	public void setId(String spec_id) {
 		this.spec_id=spec_id;
 	}
-	
+	*/
 }

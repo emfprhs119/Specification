@@ -20,19 +20,10 @@ public class MainFrame extends JFrame {
 		super.frameInit();
 		setBounds(200, 0, Main.frameWidth,Main.frameHeight);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		// setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 		contentPane = this.getContentPane();
 		contentPane.setLayout(null);
 		contentPane.setBackground(Color.WHITE);
-		/*
-		contentPane.addMouseListener(new MouseAdapter(){
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				helpPopup(false);
-			}
-		});
-		*/
 	}
 
 	public MainFrame(int x, int y) {

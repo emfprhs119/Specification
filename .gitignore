@@ -1,3 +1,6 @@
 *.class
 save/
 save_pdf/
+stamp.png
+data.db
+pdf/
