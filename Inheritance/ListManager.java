@@ -19,24 +19,26 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import Main.Main;
 
-public class ListManager<T extends Model_Interface,LIST extends List_Interface<T>> extends JFrame {
+public class ListManager<T extends Model_Interface, LIST extends List_Interface<T>> extends JFrame {
 	View_Interface<T> view_Interface;
 	JTable table;
-	JPanel panel;
+	public JPanel panel;
+	public JScrollPane scroll;
 	JTextField searchField;
 	JFrame addFrame;
 	LIST list;
 	String[] column;
 	int[] columnWidth;
-	boolean autoVisible;
-	public ListManager(String managerName,View_Interface<T> view_Interface,LIST list,ColumnManager columnManager,boolean autoVisible) {
+	int flag;
+
+	public ListManager(String managerName, View_Interface<T> view_Interface, LIST list, ColumnManager columnManager,
+			int flag) {
 		super(managerName);
 		this.view_Interface = view_Interface;
-		this.column=columnManager.getColumn();
-		this.columnWidth=columnManager.getColumnWidth();
-		this.list= list;
-		this.autoVisible=autoVisible;
-		autoVisible=true;
+		this.column = columnManager.getColumn();
+		this.columnWidth = columnManager.getColumnWidth();
+		this.list = list;
+		this.flag = flag;
 		panel = new JPanel();
 		searchField = new JTextField(14);
 		Button searchButton = new Button("검색");
@@ -45,10 +47,10 @@ public class ListManager<T extends Model_Interface,LIST extends List_Interface<T
 		setLayout(null);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setResizable(false);
-		buttonInit();
+		if (flag!=2)
+			buttonInit();
 		tableInit();
-		
-		
+
 		searchField.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -77,8 +79,9 @@ public class ListManager<T extends Model_Interface,LIST extends List_Interface<T
 		add(resetButton);
 		add(panel);
 	}
-	public void setAddFrame(JFrame addFrame){
-		this.addFrame= addFrame;
+
+	public void setAddFrame(JFrame addFrame) {
+		this.addFrame = addFrame;
 	}
 
 	public void buttonInit() {
@@ -102,7 +105,7 @@ public class ListManager<T extends Model_Interface,LIST extends List_Interface<T
 				tableUpdate();
 			}
 		});
-		
+
 		button[2] = new Button("불러오기");
 		button[2].setBounds(265, 495, 80, 40);
 		button[2].addActionListener(new ActionListener() {
@@ -112,30 +115,30 @@ public class ListManager<T extends Model_Interface,LIST extends List_Interface<T
 					JOptionPane.showMessageDialog(null, "불러올 수 없습니다.");
 					return;
 				}
-				if (index == -1){
+				if (index == -1) {
 					JOptionPane.showMessageDialog(null, "선택 후 불러와 주세요.");
 					return;
 				}
 				view_Interface.loadData(list.get(index));
-				if (autoVisible)
+				if (flag == 1)
 					setVisible(false);
 			}
 		});
-		if (autoVisible)
+		if (flag == 1)
 			add(button[0]);
 		add(button[1]);
 		add(button[2]);
 	}
 
 	void tableInit() {
-		String [][]row = new String[0][column.length];
+		String[][] row = new String[0][column.length];
 		DefaultTableModel model = new DefaultTableModel(row, column) {
 			public boolean isCellEditable(int row, int col) {
 				return false;
 			}
 		};
 		table = new JTable(model);
-		
+
 		table.getTableHeader().setReorderingAllowed(false);
 
 		table.setRowHeight(18);
@@ -143,33 +146,35 @@ public class ListManager<T extends Model_Interface,LIST extends List_Interface<T
 
 		table.setDragEnabled(false);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 한 셀만 선택
-		//불러오기
-		table.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent event) {
-				int index = table.getSelectedRow();
-				if (event.getClickCount() == 2) {
-					if (table == null) {
-						JOptionPane.showMessageDialog(null, "불러올 수 없습니다.");
-						return;
+		// 불러오기
+		if (flag != 2) {
+			table.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent event) {
+					int index = table.getSelectedRow();
+					if (event.getClickCount() == 2) {
+						if (table == null) {
+							JOptionPane.showMessageDialog(null, "불러올 수 없습니다.");
+							return;
+						}
+						if (index == -1) {
+							JOptionPane.showMessageDialog(null, "선택 후 불러와 주세요.");
+							return;
+						}
+						view_Interface.loadData(list.get(index));
+						if (flag == 1)
+							setVisible(false);
 					}
-					if (index == -1){
-						JOptionPane.showMessageDialog(null, "선택 후 불러와 주세요.");
-						return;
-					}
-					view_Interface.loadData(list.get(index));
-					if (autoVisible)
-						setVisible(false);
 				}
-			}
-		});
-		JScrollPane scroll = new JScrollPane(table);
+			});
+		}
+		scroll = new JScrollPane(table);
 		scroll.setPreferredSize(new Dimension(350, 440));
 		panel.setBounds(7, 40, 350, 440);
 		panel.add(scroll);
 	}
 
 	public void setVisible(boolean b) {
-		if (b){
+		if (b) {
 			searchField.setText("");
 			tableUpdate();
 		}
@@ -178,38 +183,37 @@ public class ListManager<T extends Model_Interface,LIST extends List_Interface<T
 
 	public void tableUpdate() {
 		list.loadList(searchField.getText());
-		String []strArr;
+		String[] strArr;
 		tableSet(list.size());
 		for (int i = 0; i < list.size(); i++) {
-			strArr=list.get(i).getLoadArr();
-			for(int j=0;j<strArr.length;j++){
+			strArr = list.get(i).getLoadArr();
+			for (int j = 0; j < strArr.length; j++) {
 				table.setValueAt(strArr[j], i, j);
 			}
 		}
 	}
 
 	public void tableSet(int n) {
-		String [][]row = new String[n][3];
+		String[][] row = new String[n][3];
 		DefaultTableModel model = new DefaultTableModel((String[][]) row, column) {
 			public boolean isCellEditable(int row, int col) {
 				return false;
 			}
 		};
 		table.setModel(model);
-		for(int i=0;i<column.length;i++)
+		for (int i = 0; i < column.length; i++)
 			table.getColumn(column[i]).setPreferredWidth(columnWidth[i]);
 	}
 
-	public boolean addItem(T item){
+	public boolean addItem(T item) {
 		return list.addQuery(item);
-		
+
 	}
-	public void setAutoVisible(boolean b) {
-		autoVisible=false;
-	}
+
 	public boolean isHas(T item) {
 		return list.isHasQuery(item);
 	}
+
 	public T getObject(String id) {
 		return list.loadObject(id);
 	}

@@ -100,7 +100,7 @@ public class DemandView extends WhitePanel implements View_Interface<Demand> {
 		String strArr[] = { "상호", "등록번호", "담당자" };
 		int intArr[] = {120,40,10};
 		column.setColumn(strArr,intArr);
-		listManager = new ListManager<Demand,DemandList>("거래처 불러오기",this,new DemandList(),column,true);
+		listManager = new ListManager<Demand,DemandList>("거래처 불러오기",this,new DemandList(),column,1);
 		new DemandAdd(listManager);
 	}
 

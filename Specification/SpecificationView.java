@@ -98,7 +98,7 @@ public class SpecificationView extends JFrame implements View_Interface<Specific
 		int intArr[] = { 40, 120, 10 };
 		column.setColumn(strArr, intArr);
 		listManager = new ListManager<Specification, SpecificationList>("명세서 불러오기", this, new SpecificationList(),
-				column, false);
+				column, 0);
 		listManager.setBounds(1038, 0, 380, 600);
 	}
 

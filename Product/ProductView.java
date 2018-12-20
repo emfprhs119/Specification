@@ -171,7 +171,7 @@ public class ProductView implements View_Interface<ProductList> {
 		String strArr[] = { "상호", "등록번호", "담당자" };
 		int intArr[] = { 120, 40, 10 };
 		column.setColumn(strArr, intArr);
-		listManager = new ListManager<Product, ProductList>("거래처 불러오기", null, productList, column, false);
+		listManager = new ListManager<Product, ProductList>("거래처 불러오기", null, productList, column, 0);
 	}
 
 	private void popupInit(JPanel frontPanel, JPanel backPanel) {

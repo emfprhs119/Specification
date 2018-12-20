@@ -4,20 +4,24 @@ import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
-import javax.swing.JFrame;
+
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import Main.Main;
+import Specification.SearchView;
 
 public class MenuAction extends MouseAdapter implements ActionListener {
 	JFrame frame;
 	Function function;
 	boolean isButton;
+	SearchView searchView;
 	public MenuAction(JFrame frame,Function function,boolean isButton){
 		this.frame=frame;
 		this.function=function;
 		this.isButton=isButton;
+		this.searchView = new SearchView();
 	}
 	public void actionPerformed(ActionEvent e) {
 		String str;
@@ -75,6 +79,9 @@ public class MenuAction extends MouseAdapter implements ActionListener {
 		case "PDF":
 		case "PDF내보내기":
 			function.printOutPdf(0);
+			break;
+		case "검색하기":
+			searchView.setVisible(true);
 			break;
 		case "종료":
 			if (function.getViewManager().isModify()) {
