@@ -93,11 +93,11 @@ class SearchList implements List_Interface<Search>{
 		if (search.equals(""))
 			return;
 		else{
-			sb.append("Select * from SPEC,PRODUCT WHERE SPEC.SPEC_ID == PRODUCT.SPEC_ID AND (ITEM_NAME = '");
+			sb.append("Select * from SPEC,PRODUCT WHERE SPEC.SPEC_ID == PRODUCT.SPEC_ID AND (ITEM_NAME LIKE '%");
 			sb.append(search);
-			sb.append("' OR ITEM_STANDARD = '");
+			sb.append("%' OR ITEM_STANDARD LIKE '%");
 			sb.append(search);
-			sb.append("');");
+			sb.append("%');");
 			Main.dataReader.getQuery(this, sb.toString());
 		}
 	}
