@@ -1,6 +1,7 @@
 package Demand;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import javax.swing.JOptionPane;
 
@@ -12,6 +13,13 @@ class DemandList extends ArrayList<Demand> implements List_Interface<Demand> {
 	@Override
 	public void getRs(ResultSet rs) {
 		add(new Demand(rs));
+		this.sort(new Comparator<Demand>() {
+			@Override
+			public int compare(Demand o1, Demand o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+			
+		});
 	}
 
 	@Override
